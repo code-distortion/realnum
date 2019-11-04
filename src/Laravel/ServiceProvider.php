@@ -75,9 +75,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         RealNum::setDefaultImmutability($immutable);
         Percent::setDefaultImmutability($immutable);
 
-        $noBreakWhitespace = config('realnum.no_break_whitespace');
-        RealNum::setDefaultNoBreakWhitespace($noBreakWhitespace);
-        Percent::setDefaultNoBreakWhitespace($noBreakWhitespace);
+        $formatSettings = config('realnum.format_settings');
+        RealNum::setDefaultFormatSettings($formatSettings);
+        Percent::setDefaultFormatSettings($formatSettings);
     }
 
     /**

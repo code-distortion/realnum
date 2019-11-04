@@ -11,14 +11,6 @@ namespace CodeDistortion\RealNum;
 class Percent extends RealNum
 {
     /**
-     * The default locale (at the class-level)
-     *
-     * Objects will pick this value up when instantiated.
-     * @var integer|string
-     */
-    protected static $defaultLocale = 'en';
-
-    /**
      * The default maximum number of decimal places available to use (at the class-level)
      *
      * Objects will pick this value up when instantiated.
@@ -35,13 +27,21 @@ class Percent extends RealNum
     protected static $defaultImmutable = true;
 
     /**
-     * The default non-breaking-whitespace setting (at the class-level).
+     * The default settings to use when formatting the number (at the class-level).
      *
-     * Used when formatting a number.
      * Objects will pick this value up when instantiated.
-     * @var boolean
+     * @var array
      */
-    protected static $defaultNoBreakWhitespace = false;
+    protected static $defaultFormatSettings = [
+        'thousands' => true,
+        'showPlus' => false,
+        'accountingNeg' => false,
+        'nullString' => false,
+        'nullZero' => false,
+        'trailZeros' => false,
+        'nbsp' => true,
+        'locale' => 'en',
+    ];
 
 
 
@@ -55,10 +55,6 @@ class Percent extends RealNum
      * @var ?callable
      */
     protected static $localeResolver = null;
-
-
-
-
 
     /**
      * An internal setting - This will add an extra 2 decPl internally when rounding, and will cause it to be rendered

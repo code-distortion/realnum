@@ -2,6 +2,7 @@
 
 namespace CodeDistortion\RealNum;
 
+use CodeDistortion\Options\Options;
 use CodeDistortion\RealNum\Base;
 use NumberFormatter;
 
@@ -10,17 +11,25 @@ use NumberFormatter;
  *
  * Represents floating-point numbers, performs calculations & comparisons on them, and renders them.
  * PHP's bcmath functions are used internally.
- * @property ?integer  $maxDecPl
+ * @property integer $maxDecPl
   */
 class RealNum extends Base
 {
     /**
-     * The default locale (at the class-level)
-     *
-     * Objects will pick this value up when instantiated.
-     * @var integer|string
+     * The original default format-settings - used when resetting the class-level defaults
      */
-    protected static $defaultLocale = 'en';
+    const ORIG_FORMAT_SETTINGS = [
+        'thousands' => true,
+        'showPlus' => false,
+        'accountingNeg' => false,
+        'nullString' => false,
+        'nullZero' => false,
+        'trailZeros' => false,
+        'nbsp' => true,
+        'locale' => 'en',
+    ];
+
+
 
     /**
      * The default maximum number of decimal places available to use (at the class-level)
@@ -39,13 +48,21 @@ class RealNum extends Base
     protected static $defaultImmutable = true;
 
     /**
-     * The default non-breaking-whitespace setting (at the class-level).
+     * The default settings to use when formatting the number (at the class-level).
      *
-     * Used when formatting a number.
      * Objects will pick this value up when instantiated.
-     * @var boolean
+     * @var array
      */
-    protected static $defaultNoBreakWhitespace = false;
+    protected static $defaultFormatSettings = [
+        'thousands' => true,
+        'showPlus' => false,
+        'accountingNeg' => false,
+        'nullString' => false,
+        'nullZero' => false,
+        'trailZeros' => false,
+        'nbsp' => true,
+        'locale' => 'en',
+    ];
 
 
 
@@ -59,59 +76,6 @@ class RealNum extends Base
      * @var ?callable
      */
     protected static $localeResolver = null;
-
-
-
-
-
-    /**
-     * Affects formatting - don't show the decimal places when there is no decimal place value
-     */
-    // const NO_ZEROS = 1;
-
-    /**
-     * Affects formatting - show the trailing zeros at the end of the decimal numbers
-     */
-    const ALL_DEC_PL = 2;
-
-    /**
-     * Affects formatting - removes the thousands separator
-     */
-    const NO_THOUSANDS = 4;
-
-    /**
-     * Affects formatting - the plus is normally omitted (unlike a negative minus),
-     * show the plus sign for positive values
-     */
-    const SHOW_PLUS = 8;
-
-    /**
-     * Affects formatting - show positive and negative values in accounting format
-     * (ie. show negative numbers in brackets)
-     */
-    const ACCT_NEG = 16;
-
-    /**
-     * Affects formatting - will return 0 instead of null
-     */
-    const NULL_AS_ZERO = 32;
-
-    /**
-     * Affects formatting - should (the string) "null" be rendered for null values (otherwise actual null is returned)
-     */
-    const NULL_AS_STRING = 64;
-
-    /**
-     * Affects formatting - normally non-breaking spaces and other characters are returned as regular spaces. using this
-     * will leave them as they were
-     *
-     */
-    const NO_BREAK_WHITESPACE = 128;
-
-    /**
-     * Affects formatting - don't use the currency symbol
-     */
-    // const NO_SYMBOL = 256;
 
 
 
@@ -183,33 +147,29 @@ class RealNum extends Base
     /**
      * Format the current number in a readable way
      *
-     * @param integer|null $options The render options made up from RealNum constants (eg. RealNum::NO_THOUSANDS).
-     * @param integer|null $decPl   The number of decimal places to render to.
+     * @param string|array|null $options The render options made up from RealNum constants (eg. RealNum::NO_THOUSANDS).
+     * @param integer|null      $decPl   The number of decimal places to render to.
      * @return string
      */
-    public function format(?int $options = 0, int $decPl = null): ?string
+    public function format($options = null, int $decPl = null): ?string
     {
-        $value = $this->getVal();
-        $options = (int) $options;
+        $options = Options::defaults($this->formatSettings)->resolve($options);
 
         // render nulls as 0 if desired
+        $value = $this->getVal();
         if (((!is_string($value)) || (!mb_strlen($value)))
-        && ((bool) ($options & static::NULL_AS_ZERO))) {
+        && ($options['nullZero'])) {
             $value = '0';
         }
 
         if ((is_string($value)) && (mb_strlen($value))) {
 
-            $trailingDecimalZeros  = (bool) ($options & static::ALL_DEC_PL);
-            $noThousands           = (bool) ($options & static::NO_THOUSANDS);
-            $showPlus              = (bool) ($options & static::SHOW_PLUS);
-            $accountingNegative    = (bool) ($options & static::ACCT_NEG);
-            // otherwise fall back to the current non-breaking-whitespace setting
-            $noBreakWhitespace = (($options & static::NO_BREAK_WHITESPACE)
-                                        ? true
-                                        : $this->effectiveNoBreakWhitespace());
+            // allow locale to be specified by the caller
+            // $locale = ($options['locale']
+            //     ? $this->resolveLocaleCode($options['locale'])
+            //     : $this->effectiveLocale());
 
-            $locale   = $this->effectiveLocale();
+            $locale = $this->resolveLocaleCode($options['locale']);
             $maxDecPl = $this->internalMaxDecPl();
             $type     = (static::$percentageMode ? NumberFormatter::PERCENT : NumberFormatter::DECIMAL);
 
@@ -217,7 +177,7 @@ class RealNum extends Base
             if (is_null($decPl)) {
 
                 // show decimal zeros if desired
-                if ($trailingDecimalZeros) {
+                if ($options['trailZeros']) {
                     $decPl = $this->maxDecPl;
 
                 // work out how many decimal places there actually are, because NumberFormatter seems to round
@@ -234,8 +194,9 @@ class RealNum extends Base
 
             $numberFormatter = new NumberFormatter($locale, $type);
             $numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decPl);
+
             // remove the thousands separator if desired
-            if ($noThousands) {
+            if (!$options['thousands']) {
                 $numberFormatter->setAttribute(NumberFormatter::GROUPING_SEPARATOR_SYMBOL, null);
             }
 
@@ -250,9 +211,9 @@ class RealNum extends Base
                 $value,
                 $maxDecPl,
                 $locale,
-                $accountingNegative,
-                $showPlus,
-                $noBreakWhitespace,
+                (bool) $options['accountingNeg'],
+                (bool) $options['showPlus'],
+                (bool) $options['nbsp'],
                 $numberFormatter,
                 $callback
             );
@@ -260,7 +221,6 @@ class RealNum extends Base
             return $return;
         }
 
-        $showNull = (bool) ($options & static::NULL_AS_STRING);
-        return ($showNull ? 'null' : null);
+        return ($options['nullString'] ? 'null' : null);
     }
 }

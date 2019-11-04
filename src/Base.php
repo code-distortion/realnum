@@ -2,6 +2,7 @@
 
 namespace CodeDistortion\RealNum;
 
+use CodeDistortion\Options\Options;
 use ErrorException;
 use InvalidArgumentException;
 use NumberFormatter;
@@ -12,22 +13,31 @@ use NumberFormatter;
  * Represents floating-point numbers, performs calculations & comparisons on them, and renders them.
  * PHP's bcmath functions are used internally.
  * @property ?callable $localeResolver
- * @property ?string   $locale
- * @property ?boolean  $immutable
- * @property ?boolean  $noBreakWhitespace
+ * @property string   $locale
+ * @property boolean  $immutable
+ * @property boolean   $noBreakWhitespace
+ * @property array     $formatSettings
  * @property ?string   $val
  * @property ?float    $cast
   */
 abstract class Base
 {
+    /**
+     * The original default maxDecPl - used when resetting the class-level defaults
+     */
+    const ORIG_MAX_DEC_PL = 20;
 
     /**
-     * The default locale (at the class-level)
-     *
-     * Objects will pick this value up when instantiated.
-     * @var integer|string
+     * The original default immuatble-setting - used when resetting the class-level defaults
      */
-    protected static $defaultLocale = 'en';
+    const ORIG_IMMUTABLE = true;
+
+    /**
+     * The original default format-settings - used when resetting the class-level defaults
+     */
+    const ORIG_FORMAT_SETTINGS = null;
+
+
 
     /**
      * The default maximum number of decimal places available to use (at the class-level)
@@ -46,37 +56,16 @@ abstract class Base
     protected static $defaultImmutable = true;
 
     /**
-     * The default non-breaking-whitespace setting (at the class-level).
+     * The default settings to use when formatting the number (at the class-level).
      *
-     * Used when formatting a number.
      * Objects will pick this value up when instantiated.
-     * @var boolean
+     * @var array
      */
-    protected static $defaultNoBreakWhitespace = false;
+    protected static $defaultFormatSettings = [
+        'locale' => 'en',
+    ];
 
 
-
-
-
-    /**
-     * Callback used to resolve localeIdentifiers
-     *
-     * It may for example understand database ids, and map them back to their 'en-AU' equivalent.
-     * When this hasn't been set, the locales are assumed to be strings like 'en-AU' and treated as is.
-     * @var ?callable
-     */
-    protected static $localeResolver = null;
-
-
-
-
-
-    /**
-     * The locale this object is currently using
-     *
-     * @var ?string
-     */
-    protected $locale = null;
 
     /**
      * The maximum number of decimal places available to use
@@ -93,11 +82,13 @@ abstract class Base
     protected $immutable = null;
 
     /**
-     * Whether this object should render non-breaking whitespaces or not
+     * This object's current format settings
      *
-     * @var ?boolean
+     * @var ?array
      */
-    protected $noBreakWhitespace = null;
+    protected $formatSettings = null;
+
+
 
     /**
      * The value this object represents
@@ -109,6 +100,15 @@ abstract class Base
 
 
 
+
+    /**
+     * Callback used to resolve localeIdentifiers
+     *
+     * It may for example understand database ids, and map them back to their 'en-AU' equivalent.
+     * When this hasn't been set, the locales are assumed to be strings like 'en-AU' and treated as is.
+     * @var ?callable
+     */
+    protected static $localeResolver = null;
 
     /**
      * An internal setting - This will add an extra 2 decPl internally when rounding, and will cause it to be rendered
@@ -124,8 +124,6 @@ abstract class Base
 
 
 
-
-
     /**
      * Constructor
      *
@@ -136,18 +134,15 @@ abstract class Base
     public function __construct($value = null, bool $throwException = true)
     {
         // copy the default settings into this object
-        // (they may already have values from child class constructors
-        if (is_null($this->locale)) {
-            $this->locale = static::resolveLocaleCode(static::$defaultLocale);
-        }
+        // (they may already have values from child class constructors)
         if (is_null($this->maxDecPl)) {
             $this->maxDecPl = static::$defaultMaxDecPl;
         }
         if (is_null($this->immutable)) {
             $this->immutable = static::$defaultImmutable;
         }
-        if (is_null($this->noBreakWhitespace)) {
-            $this->noBreakWhitespace = static::$defaultNoBreakWhitespace;
+        if (is_null($this->formatSettings)) {
+            $this->formatSettings = static::$defaultFormatSettings;
         }
 
         $this->init();
@@ -198,10 +193,10 @@ abstract class Base
      */
     public static function resetDefaults(): void
     {
-        static::$defaultLocale = 'en';
-        static::$defaultMaxDecPl = 20;
-        static::$defaultImmutable = true;
-        static::$defaultNoBreakWhitespace = false;
+        static::$defaultMaxDecPl = static::ORIG_MAX_DEC_PL;
+        static::$defaultImmutable = static::ORIG_IMMUTABLE;
+        static::$defaultFormatSettings = static::ORIG_FORMAT_SETTINGS;
+
         static::$localeResolver = null;
     }
 
@@ -212,7 +207,7 @@ abstract class Base
      */
     public static function getDefaultLocale()
     {
-        return static::$defaultLocale;
+        return static::$defaultFormatSettings['locale'];
     }
 
     /**
@@ -223,7 +218,7 @@ abstract class Base
      */
     public static function setDefaultLocale($locale): void
     {
-        static::$defaultLocale = $locale;
+        static::$defaultFormatSettings['locale'] = static::resolveLocaleCode($locale);
     }
 
     /**
@@ -254,7 +249,7 @@ abstract class Base
      */
     public static function getDefaultNoBreakWhitespace(): bool
     {
-        return static::$defaultNoBreakWhitespace;
+        return static::$defaultFormatSettings['nbsp'];
     }
 
     /**
@@ -265,7 +260,28 @@ abstract class Base
      */
     public static function setDefaultNoBreakWhitespace(bool $noBreakWhitespace): void
     {
-        static::$defaultNoBreakWhitespace = $noBreakWhitespace;
+        static::$defaultFormatSettings['nbsp'] = $noBreakWhitespace;
+    }
+
+    /**
+     * Retrieve the default format settings
+     *
+     * @return array
+     */
+    public static function getDefaultFormatSettings(): array
+    {
+        return static::$defaultFormatSettings;
+    }
+
+    /**
+     * Update the default format settings
+     *
+     * @param string|array|null $formatSettings The immutable setting to set.
+     * @return void
+     */
+    public static function setDefaultFormatSettings($formatSettings = null): void
+    {
+        static::$defaultFormatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($formatSettings);
     }
 
 
@@ -293,9 +309,15 @@ abstract class Base
             case 'immutable':
                 return $this->effectiveImmutable();
 
-            // return the non-breaking-whitespace-setting
+            // return the no-break whitespace setting
             case 'noBreakWhitespace':
-                return $this->effectiveNoBreakWhitespace();
+                return $this->formatSettings['nbsp'];
+
+            // return the formatSettings
+            case 'formatSettings':
+                return $this->formatSettings;
+
+
 
             // return the localeResolver
             case 'localeResolver':
@@ -328,21 +350,9 @@ abstract class Base
         // this object may be immutable so don't allow it to be updated like this
         // switch ($name) {
 
-        //     // set the localeResolver
-        //     case 'localeResolver':
-        //         static::$localeResolver = $value;
-        //         return;
-
-
-
         //     // set the locale this object uses
         //     case 'locale':
-        //         $this->locale = static::resolveLocaleCode($value);
-        //         return;
-
-        //     // set the maximum number of decimal places available for this object to use
-        //     case 'maxDecPl':
-        //         $this->setMaxDecPl(!is_null($value) ? $value : null);
+        //         $this->formatSettings['locale'] = static::resolveLocaleCode($value);
         //         return;
 
         //     // set the immutable-setting this object uses
@@ -350,9 +360,19 @@ abstract class Base
         //         $this->immutable = (!is_null($value) ? (bool) $value : null);
         //         return;
 
-        //     // set the non-breaking-whitespace-setting this object uses
+        //     // set the no-break whitespace setting this object uses
         //     case 'noBreakWhitespace':
-        //         $this->noBreakWhitespace = (!is_null($value) ? (bool) $value : null);
+        //         $this->formatSettinsg['nbsp'] = (bool) $value;
+        //         return;
+
+        //     // set the format-settings-setting this object uses
+        //     case 'formatSettings':
+        //         $this->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($value);
+        //         return;
+
+        //     // set the localeResolver
+        //     case 'localeResolver':
+        //         static::$localeResolver = $value;
         //         return;
 
 
@@ -446,7 +466,7 @@ abstract class Base
     public function locale($locale): self
     {
         $realNum = $this->immute();
-        $realNum->locale = static::resolveLocaleCode($locale);
+        $realNum->formatSettings['locale'] = static::resolveLocaleCode($locale);
         return $realNum; // chainable - immutable
     }
 
@@ -483,7 +503,20 @@ abstract class Base
     public function noBreakWhitespace(bool $noBreakWhitespace): self
     {
         $realNum = $this->immute();
-        $realNum->noBreakWhitespace = $noBreakWhitespace;
+        $realNum->formatSettings['nbsp'] = $noBreakWhitespace;
+        return $realNum; // chainable - immutable
+    }
+
+    /**
+     * This object's current format settings
+     *
+     * @param string|array|null $formatSettings The immutable setting to set.
+     * @return static
+     */
+    public function formatSettings($formatSettings): self
+    {
+        $realNum = $this->immute();
+        $realNum->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($formatSettings);
         return $realNum; // chainable - immutable
     }
 
@@ -1398,7 +1431,7 @@ abstract class Base
                 return $locale;
             }
         }
-        return (string) $this->locale;
+        return (string) $this->formatSettings['locale'];
     }
 
     /**
@@ -1424,17 +1457,5 @@ abstract class Base
     protected function effectiveImmutable(bool $immutable = null): bool
     {
         return (!is_null($immutable) ? $immutable : (bool) $this->immutable);
-    }
-
-    /**
-     * Use the given non-breaking-whitespace setting, but use the current one if needed
-     *
-     * @param boolean|null $noBreakWhitespace The noBreakWhitespace to force
-     *                                        (otherwise the current one is used).
-     * @return boolean
-     */
-    protected function effectiveNoBreakWhitespace(bool $noBreakWhitespace = null): bool
-    {
-        return (!is_null($noBreakWhitespace) ? $noBreakWhitespace : (bool) $this->noBreakWhitespace);
     }
 }

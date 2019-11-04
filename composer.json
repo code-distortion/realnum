@@ -34,7 +34,8 @@
     "require": {
         "php": "^7.1",
         "ext-bcmath": "*",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "code-distortion/options": "^0.2.0"
     },
     "require-dev": {
         "jchook/phpunit-assert-throws": "^1.0",

@@ -28,15 +28,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Non-breaking whitespace
+    | Format settings
     |--------------------------------------------------------------------------
     |
-    | RealNum and Percent can either return strings when formatting with
-    | regular whitespace (like regular space characters), or non-breaking
-    | whitespace. TThis value determines what will be returned by default.
+    | RealNum and Percent will use these default settings when format() is
+    | called. You can adjust these by adding values to the string below.
+    | You may choose from the possible values below.
     |
     */
 
-    'no_break_whitespace' => false,
+    'format_settings' => null, // 'thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros nbsp',
 
 ];

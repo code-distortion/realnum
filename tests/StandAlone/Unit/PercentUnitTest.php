@@ -54,52 +54,51 @@ class PercentUnitTest extends TestCase
             '12.345%',
         ];
         $output['de'] = [
-            '12,345 %',
-            '12,345 %',
-            '12,35 %',
-            '12,3 %',
-            '12 %',
-            '100 %',
-            '10.000 %',
-            '100 %',
-            '100,000 %',
-            '10000 %',
-            '+100 %',
-            '100 %',
-            '(100 %)',
-            '+10012,34500000000000000000 %',
+            '12,345 %',
+            '12,345 %',
+            '12,35 %',
+            '12,3 %',
+            '12 %',
+            '100 %',
+            '10.000 %',
+            '100 %',
+            '100,000 %',
+            '10000 %',
+            '+100 %',
+            '100 %',
+            '(100 %)',
+            '+10012,34500000000000000000 %',
             'null',
             null,
-            '12,345 %', // non-breaking spaces
+            '12,345 %', // breaking spaces
         ];
 
 
 
         $return = [];
         foreach ($output as $locale => $outputValues) {
-            $return[] = [$locale, 0.12345, 20, 0, $outputValues[0]];
-            $return[] = [$locale, 0.12345, 3, 0, $outputValues[1]];
-            $return[] = [$locale, 0.12345, 2, 0, $outputValues[2]];
-            $return[] = [$locale, 0.12345, 1, 0, $outputValues[3]];
-            $return[] = [$locale, 0.12345, 0, 0, $outputValues[4]];
-            $return[] = [$locale, 1, 20, 0, $outputValues[5]];
-            $return[] = [$locale, 100, 20, 0, $outputValues[6]];
-            $return[] = [$locale, 1, 3, 0, $outputValues[7]];
-            $return[] = [$locale, 1, 3, Percent::ALL_DEC_PL, $outputValues[8]];
-            $return[] = [$locale, 100, 20, Percent::NO_THOUSANDS, $outputValues[9]];
-            $return[] = [$locale, 1, 20, Percent::SHOW_PLUS, $outputValues[10]];
-            $return[] = [$locale, 1, 20, Percent::ACCT_NEG, $outputValues[11]];
-            $return[] = [$locale, -1, 20, Percent::ACCT_NEG, $outputValues[12]];
+            $return[] = [$locale, 0.12345, 20, null, $outputValues[0]];
+            $return[] = [$locale, 0.12345, 3, null, $outputValues[1]];
+            $return[] = [$locale, 0.12345, 2, null, $outputValues[2]];
+            $return[] = [$locale, 0.12345, 1, null, $outputValues[3]];
+            $return[] = [$locale, 0.12345, 0, null, $outputValues[4]];
+            $return[] = [$locale, 1, 20, null, $outputValues[5]];
+            $return[] = [$locale, 100, 20, null, $outputValues[6]];
+            $return[] = [$locale, 1, 3, null, $outputValues[7]];
+            $return[] = [$locale, 1, 3, 'trailZeros', $outputValues[8]];
+            $return[] = [$locale, 100, 20, '-thousands', $outputValues[9]];
+            $return[] = [$locale, 1, 20, 'showPlus', $outputValues[10]];
+            $return[] = [$locale, 1, 20, 'accountingNeg', $outputValues[11]];
+            $return[] = [$locale, -1, 20, 'accountingNeg', $outputValues[12]];
             $return[] = [
                 $locale,
                 100.1234500,
                 20,
-                Percent::ALL_DEC_PL | Percent::NO_THOUSANDS | Percent::SHOW_PLUS | Percent::ACCT_NEG
-                    | Percent::NULL_AS_STRING,
+                'trailZeros -thousands showPlus accountingNeg nullString',
                 $outputValues[13]];
-            $return[] = [$locale, null, 20, Percent::NULL_AS_STRING, $outputValues[14]];
-            $return[] = [$locale, null, 20, 0, $outputValues[15]];
-            $return[] = [$locale, 0.12345, 20, Percent::NO_BREAK_WHITESPACE, $outputValues[16]];
+            $return[] = [$locale, null, 20, 'nullString', $outputValues[14]];
+            $return[] = [$locale, null, 20, null, $outputValues[15]];
+            $return[] = [$locale, 0.12345, 20, '-nbsp', $outputValues[16]];
         }
 
         return $return;
@@ -126,8 +125,6 @@ class PercentUnitTest extends TestCase
         $this->assertSame(20, RealNum::getDefaultMaxDecPl());
         $this->assertTrue(Percent::getDefaultImmutability());
         $this->assertTrue(RealNum::getDefaultImmutability());
-        $this->assertFalse(Percent::getDefaultNoBreakWhitespace());
-        $this->assertFalse(RealNum::getDefaultNoBreakWhitespace());
 
         Percent::setDefaultLocale('en-AU');
         RealNum::setDefaultLocale('en-UK');
@@ -143,11 +140,6 @@ class PercentUnitTest extends TestCase
         RealNum::setDefaultImmutability(true);
         $this->assertFalse(Percent::getDefaultImmutability());
         $this->assertTrue(RealNum::getDefaultImmutability());
-
-        Percent::setDefaultNoBreakWhitespace(true);
-        RealNum::setDefaultNoBreakWhitespace(false);
-        $this->assertTrue(Percent::getDefaultNoBreakWhitespace());
-        $this->assertFalse(RealNum::getDefaultNoBreakWhitespace());
     }
 
     /**
@@ -183,18 +175,18 @@ class PercentUnitTest extends TestCase
      *
      * @test
      * @dataProvider renderingDataProvider
-     * @param string      $locale        The locale to use.
-     * @param float|null  $initialValue  The value to render.
-     * @param integer     $maxDecPl      The options to use while rendering.
-     * @param integer     $renderOptions The number of decimal places to round to.
-     * @param string|null $expectedValue The expected render output.
+     * @param string            $locale        The locale to use.
+     * @param float|null        $initialValue  The value to render.
+     * @param integer           $maxDecPl      The options to use while rendering.
+     * @param string|array|null $renderOptions The number of decimal places to round to.
+     * @param string|null       $expectedValue The expected render output.
      * @return void
      */
     public function test_percentage_rendering(
         string $locale,
         ?float $initialValue,
         int $maxDecPl,
-        int $renderOptions,
+        $renderOptions,
         ?string $expectedValue
     ): void {
 

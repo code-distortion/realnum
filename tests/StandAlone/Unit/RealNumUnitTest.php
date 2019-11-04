@@ -19,6 +19,23 @@ use stdClass;
 class RealNumUnitTest extends TestCase
 {
     /**
+     * Some alternate format settings used below for testing
+     *
+     * @var array
+     */
+    protected $altFormatSettings = [
+        'thousands' => false,
+        'showPlus' => true,
+        'accountingNeg' => true,
+        'nullString' => true,
+        'nullZero' => true,
+        'trailZeros' => true,
+        'nbsp' => false,
+        'locale' => 'en-US',
+    ];
+
+
+    /**
      * Some set-up, run before each test
      *
      * @return void
@@ -43,6 +60,7 @@ class RealNumUnitTest extends TestCase
             ['maxDecPl', 'maxDecPl', 13, 14],
             ['immutable', 'immutable', true, false],
             ['noBreakWhitespace', 'noBreakWhitespace', true, false],
+            ['formatSettings', 'formatSettings', $this->altFormatSettings, RealNum::ORIG_FORMAT_SETTINGS],
             ['val', 'val', '1.00000000000000000000', '2.00000000000000000000'],
             ['cast', 'cast', 1, 2],
         ];
@@ -135,23 +153,25 @@ class RealNumUnitTest extends TestCase
             'null',
             null,
             '12,345,678.9',
+            '12,345,678.9',
         ];
         $output['fr'] = [
-            '12 345 678,9',
-            '-12 345 678,9',
-            '12 345 678,9',
-            '(12 345 678,9)',
-            '+12 345 678,9',
-            '12 345 678',
-            '12 345 678,900',
-            '12 345 678,000',
+            '12 345 678,9',
+            '-12 345 678,9',
+            '12 345 678,9',
+            '(12 345 678,9)',
+            '+12 345 678,9',
+            '12 345 678',
+            '12 345 678,900',
+            '12 345 678,000',
             '12345678',
             '0',
             '12345678,000',
             '(12345678,00000000000000000000)',
             'null',
             null,
-            '12 345 678,9', // non-breaking spaces
+            '12 345 678,9', // breaking spaces
+            '12,345,678.9',
         ];
         $output['de'] = [
             '12.345.678,9',
@@ -169,6 +189,7 @@ class RealNumUnitTest extends TestCase
             'null',
             null,
             '12.345.678,9',
+            '12,345,678.9',
         ];
         $output['ja-JP'] = [
             '12,345,678.9',
@@ -185,6 +206,7 @@ class RealNumUnitTest extends TestCase
             '(12345678.00000000000000000000)',
             'null',
             null,
+            '12,345,678.9',
             '12,345,678.9',
         ];
         $output['en-IN'] = [
@@ -203,6 +225,7 @@ class RealNumUnitTest extends TestCase
             'null',
             null,
             '1,23,45,678.9',
+            '12,345,678.9',
         ];
         $output['ar-EG'] = [
             '١٢٬٣٤٥٬٦٧٨٫٩',
@@ -220,27 +243,28 @@ class RealNumUnitTest extends TestCase
             'null',
             null,
             '١٢٬٣٤٥٬٦٧٨٫٩',
+            '12,345,678.9',
         ];
 
 
 
         $return = [];
         foreach ($output as $locale => $outputValues) {
-            $return[] = [$locale, 12345678.9, 20, 0, $outputValues[0]];
-            $return[] = [$locale, -12345678.9, 20, 0, $outputValues[1]];
-            $return[] = [$locale, 12345678.9, 20, RealNum::ACCT_NEG, $outputValues[2]];
-            $return[] = [$locale, -12345678.9, 20, RealNum::ACCT_NEG, $outputValues[3]];
-            $return[] = [$locale, 12345678.9, 20, RealNum::SHOW_PLUS, $outputValues[4]];
-            $return[] = [$locale, 12345678, 20, 0, $outputValues[5]];
-            $return[] = [$locale, 12345678.9, 3, RealNum::ALL_DEC_PL, $outputValues[6]];
-            $return[] = [$locale, 12345678, 3, RealNum::ALL_DEC_PL, $outputValues[7]];
-            $return[] = [$locale, 12345678, 20, RealNum::NO_THOUSANDS, $outputValues[8]];
-            $return[] = [$locale, null, 20, RealNum::NULL_AS_ZERO, $outputValues[9]];
+            $return[] = [$locale, 12345678.9, 20, null, $outputValues[0]];
+            $return[] = [$locale, -12345678.9, 20, null, $outputValues[1]];
+            $return[] = [$locale, 12345678.9, 20, 'accountingNeg', $outputValues[2]];
+            $return[] = [$locale, -12345678.9, 20, 'accountingNeg', $outputValues[3]];
+            $return[] = [$locale, 12345678.9, 20, 'showPlus', $outputValues[4]];
+            $return[] = [$locale, 12345678, 20, null, $outputValues[5]];
+            $return[] = [$locale, 12345678.9, 3, 'trailZeros', $outputValues[6]];
+            $return[] = [$locale, 12345678, 3, 'trailZeros', $outputValues[7]];
+            $return[] = [$locale, 12345678, 20, '-thousands', $outputValues[8]];
+            $return[] = [$locale, null, 20, 'nullZero', $outputValues[9]];
 
             $return[] = [$locale,
                 12345678,
                 3,
-                RealNum::ALL_DEC_PL | RealNum::NO_THOUSANDS,
+                'trailZeros -thousands',
                 $outputValues[10]
             ];
 
@@ -248,13 +272,13 @@ class RealNumUnitTest extends TestCase
                 $locale,
                 -12345678,
                 20,
-                RealNum::ALL_DEC_PL | RealNum::NO_THOUSANDS | RealNum::ACCT_NEG | RealNum::SHOW_PLUS
-                    | RealNum::NULL_AS_ZERO | RealNum::NULL_AS_STRING,
+                'trailZeros -thousands accountingNeg showPlus nullZero nullString',
                 $outputValues[11]];
 
-            $return[] = [$locale, null, 20, RealNum::NULL_AS_STRING, $outputValues[12]];
-            $return[] = [$locale, null, 20, 0, $outputValues[13]];
-            $return[] = [$locale, 12345678.9, 20, RealNum::NO_BREAK_WHITESPACE, $outputValues[14]];
+            $return[] = [$locale, null, 20, 'nullString', $outputValues[12]];
+            $return[] = [$locale, null, 20, null, $outputValues[13]];
+            $return[] = [$locale, 12345678.9, 20, '-nbsp', $outputValues[14]];
+            $return[] = [$locale, 12345678.9, 20, 'locale=en-AU', $outputValues[15]];
         }
 
         return $return;
@@ -281,7 +305,7 @@ class RealNumUnitTest extends TestCase
         $this->assertSame('en', RealNum::new()->locale); // uses the default
         RealNum::setDefaultLocale('en-AU');
         $this->assertSame('en-AU', RealNum::getDefaultLocale());
-        $this->assertSame('en-AU', RealNum::new()->locale); // uses the default
+        $this->assertSame('en-AU', RealNum::new()->locale); // uses the new default
 
         // check the default max decimal places
         RealNum::resetDefaults();
@@ -289,7 +313,7 @@ class RealNumUnitTest extends TestCase
         $this->assertSame('1.23456789012345678901', RealNum::new('1.2345678901234567890123')->val); // uses the default
         RealNum::setDefaultMaxDecPl(5);
         $this->assertSame(5, RealNum::getDefaultMaxDecPL());
-        $this->assertSame('1.23457', (RealNum::new('1.2345678901234567890123'))->val); // uses the default
+        $this->assertSame('1.23457', (RealNum::new('1.2345678901234567890123'))->val); // uses the new default
 
         // check the default immutable-setting
         RealNum::resetDefaults();
@@ -297,22 +321,30 @@ class RealNumUnitTest extends TestCase
         $this->assertTrue(RealNum::new()->immutable); // uses the default
         RealNum::setDefaultImmutability(false);
         $this->assertFalse(RealNum::getDefaultImmutability());
-        $this->assertFalse(RealNum::new()->immutable); // uses the default
+        $this->assertFalse(RealNum::new()->immutable); // uses the new default
 
         // check the default non-breaking-whitespace setting
         RealNum::resetDefaults();
-        $this->assertFalse(RealNum::getDefaultNoBreakWhitespace());
-        $this->assertFalse(RealNum::new()->noBreakWhitespace); // uses the default
-        RealNum::setDefaultNoBreakWhitespace(true);
         $this->assertTrue(RealNum::getDefaultNoBreakWhitespace());
         $this->assertTrue(RealNum::new()->noBreakWhitespace); // uses the default
+        RealNum::setDefaultNoBreakWhitespace(false);
+        $this->assertFalse(RealNum::getDefaultNoBreakWhitespace());
+        $this->assertFalse(RealNum::new()->noBreakWhitespace); // uses the new default
+
+        // check the default immutable-setting
+        RealNum::resetDefaults();
+        $this->assertSame(RealNum::ORIG_FORMAT_SETTINGS, RealNum::getDefaultFormatSettings());
+        $this->assertSame(RealNum::ORIG_FORMAT_SETTINGS, RealNum::new()->formatSettings); // uses the default
+        RealNum::setDefaultFormatSettings($this->altFormatSettings);
+        $this->assertSame($this->altFormatSettings, RealNum::getDefaultFormatSettings());
+        $this->assertSame($this->altFormatSettings, RealNum::new()->formatSettings); // uses the new default
 
         // check that the defaults are all set
         RealNum::resetDefaults();
         $this->assertSame('en', RealNum::getDefaultLocale());
         $this->assertSame(20, RealNum::getDefaultMaxDecPL());
         $this->assertTrue(RealNum::getDefaultImmutability());
-        $this->assertFalse(RealNum::getDefaultNoBreakWhitespace());
+        $this->assertTrue(RealNum::getDefaultNoBreakWhitespace());
     }
 
     /**
@@ -449,8 +481,15 @@ class RealNumUnitTest extends TestCase
         $this->assertFalse(RealNum::new()->immutable(false)->immutable);
 
         // noBreakWhitespace
-        $this->assertFalse(RealNum::new()->noBreakWhitespace); // is the default
-        $this->assertTrue(RealNum::new()->noBreakWhitespace(true)->noBreakWhitespace);
+        $this->assertTrue(RealNum::new()->noBreakWhitespace); // is the default
+        $this->assertFalse(RealNum::new()->noBreakWhitespace(false)->noBreakWhitespace);
+
+        // formatSettings
+        $this->assertSame(RealNum::ORIG_FORMAT_SETTINGS, RealNum::new()->formatSettings); // is the default
+        $this->assertSame(
+            $this->altFormatSettings,
+            RealNum::new()->formatSettings($this->altFormatSettings)->formatSettings
+        );
     }
 
     /**
@@ -810,7 +849,7 @@ class RealNumUnitTest extends TestCase
 
         $this->assertSame('', (string) new RealNum());
 
-        $this->assertSame('null', RealNum::new()->format(RealNum::NULL_AS_STRING));
+        $this->assertSame('null', RealNum::new()->format('nullString'));
 
         $this->assertSame('5', RealNum::new(5)->format());
         $this->assertSame('5', RealNum::new(5)->maxDecPl(2)->format());
@@ -840,18 +879,18 @@ class RealNumUnitTest extends TestCase
      *
      * @test
      * @dataProvider localeRenderingDataProvider
-     * @param string      $locale        The locale to use.
-     * @param float|null  $initialValue  The value to render.
-     * @param integer     $maxDecPl      The maximum decimal places to use.
-     * @param integer     $renderOptions The options to use while rendering.
-     * @param string|null $expectedValue The expected render output.
+     * @param string            $locale        The locale to use.
+     * @param float|null        $initialValue  The value to render.
+     * @param integer           $maxDecPl      The maximum decimal places to use.
+     * @param string|array|null $renderOptions The options to use while rendering.
+     * @param string|null       $expectedValue The expected render output.
      * @return void
      */
     public function test_realnum_locale_rendering(
         string $locale,
         ?float $initialValue,
         int $maxDecPl,
-        int $renderOptions,
+        $renderOptions,
         ?string $expectedValue
     ): void {
 
@@ -990,8 +1029,8 @@ class RealNumUnitTest extends TestCase
 
         // (pseudo-)property abc doesn't exist to SET
         $this->assertThrows(ErrorException::class, function () {
-            $realNum = RealNum::new(); // phpstan false positive
-            $realNum->abc = true;
+            $realNum = RealNum::new();
+            $realNum->abc = true; // phpstan false positive
         });
 
         // invalid value to add
