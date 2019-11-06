@@ -377,6 +377,11 @@ class RealNumUnitTest extends TestCase
         $this->assertNull((new RealNum())->cast);
         $this->assertNull(RealNum::new()->cast);
 
+        $this->assertNull((new RealNum('null'))->cast);
+        $this->assertNull(RealNum::new('null')->cast);
+        $this->assertNull((new RealNum('NULL'))->cast);
+        $this->assertNull(RealNum::new('NULL')->cast);
+
         // won't throw an exception for an invalid starting value
         $this->assertNull((new RealNum('abc', false))->cast);
         $this->assertNull(RealNum::new('abc', false)->cast);

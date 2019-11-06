@@ -1319,8 +1319,12 @@ abstract class Base
         if ($value instanceof self) {
             $value = $value->getVal();
         }
+
         if (is_numeric($value)) {
             return (string) $value; // turn it into a string
+        }
+        if (mb_strtolower($value) == 'null') {
+            return null;
         }
 
         if ($throwException) {
@@ -1395,10 +1399,10 @@ abstract class Base
             }
         // strings
         } elseif (is_string($value)) {
-            if (!is_numeric($value)) {
+            if ((mb_strtolower($value) != 'null') && (!is_numeric($value))) {
                 $exceptionMsg = 'String value "'.$value.'" is not numeric';
             }
-        // strings
+        // int / float / null
         } elseif ((!is_int($value)) && (!is_float($value)) && (!is_null($value))) {
             $exceptionMsg = 'The given value "'.$value.'" is not valid';
         }
