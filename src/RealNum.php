@@ -78,6 +78,16 @@ class RealNum extends Base
      */
     protected static $localeResolver = null;
 
+    /**
+     * An internal setting - This will add an extra 2 decPl internally when rounding, and will cause it to be rendered
+     * as a percentage value
+     *
+     * This is because percent values are actually between 0 & 1, so a value of 0.12345 should be output as  12.345%.
+     * This value is to be overridden by the child Percent class.
+     * @var boolean
+     */
+    protected static $percentageMode = false;
+
 
 
 
@@ -146,18 +156,33 @@ class RealNum extends Base
 
 
     /**
+     * Set the maximum number of decimal places available for this object to use
+     *
+     * @param integer $maxDecPl The new decimal-places to use.
+     * @return static
+     */
+    public function maxDecPl(int $maxDecPl): Base
+    {
+        return $this->immute()->setDecPl($maxDecPl); // chainable - immutable
+    }
+
+
+
+
+
+    /**
      * Format the current number in a readable way
      *
-     * @param string|array|null $options The render options made up from RealNum constants (eg. RealNum::NO_THOUSANDS).
+     * @param string|array|null $options The options to use when rendering the number.
      * @param integer|null      $decPl   The number of decimal places to render to.
      * @return string
      */
     public function format($options = null, int $decPl = null): ?string
     {
+        $value = $this->getVal();
         $options = Options::defaults($this->formatSettings)->resolve($options);
 
         // render nulls as 0 if desired
-        $value = $this->getVal();
         if (((!is_string($value)) || (!mb_strlen($value)))
         && ($options['nullZero'])) {
             $value = '0';
@@ -165,12 +190,7 @@ class RealNum extends Base
 
         if ((is_string($value)) && (mb_strlen($value))) {
 
-            // allow locale to be specified by the caller
-            // $locale = ($options['locale']
-            //     ? $this->resolveLocaleCode($options['locale'])
-            //     : $this->effectiveLocale());
-
-            $locale = $this->resolveLocaleCode($options['locale']);
+            $locale = $this->resolveLocaleCode($options['locale']); // allow locale to be specified by the caller
             $maxDecPl = $this->internalMaxDecPl();
             $type     = (static::$percentageMode ? NumberFormatter::PERCENT : NumberFormatter::DECIMAL);
 
@@ -223,5 +243,19 @@ class RealNum extends Base
         }
 
         return ($options['nullString'] ? 'null' : null);
+    }
+
+    /**
+     * Use the given maxDecPl, but use the current one if needed
+     *
+     * Adjusts for percentage mode
+     * @param integer $maxDecPl The decimal places to use (otherwise the current one is used).
+     * @return integer
+     */
+    protected function internalMaxDecPl(int $maxDecPl = null): int
+    {
+        $maxDecPl = parent::internalMaxDecPl($maxDecPl);
+        $maxDecPl = (static::$percentageMode ? $maxDecPl + 2 : $maxDecPl); // adjust for percent mode
+        return (int) $maxDecPl;
     }
 }

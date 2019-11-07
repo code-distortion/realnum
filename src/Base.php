@@ -114,16 +114,6 @@ abstract class Base
      */
     protected static $localeResolver = null;
 
-    /**
-     * An internal setting - This will add an extra 2 decPl internally when rounding, and will cause it to be rendered
-     * as a percentage value
-     *
-     * This is because percent values are actually between 0 & 1, so a value of 0.12345 should be output as  12.345%.
-     * This value is to be overridden by the child Percent class.
-     * @var boolean
-     */
-    protected static $percentageMode = false;
-
 
 
 
@@ -472,17 +462,6 @@ abstract class Base
         $realNum = $this->immute();
         $realNum->formatSettings['locale'] = static::resolveLocaleCode($locale);
         return $realNum; // chainable - immutable
-    }
-
-    /**
-     * Set the maximum number of decimal places available for this object to use
-     *
-     * @param integer $maxDecPl The new decimal-places to use.
-     * @return static
-     */
-    public function maxDecPl(int $maxDecPl): Base
-    {
-        return $this->immute()->setDecPl($maxDecPl); // chainable - immutable
     }
 
     /**
@@ -1213,11 +1192,11 @@ abstract class Base
     /**
      * Format the current number in a readable way
      *
-     * @param integer|null $options The render options made up from Currency constants (eg. Currency::NO_THOUSANDS).
-     * @param integer|null $decPl   The number of decimal places to render to.
+     * @param string|array|null $options The options to use when rendering the number.
+     * @param integer|null      $decPl   The number of decimal places to render to.
      * @return string
      */
-    abstract public function format(?int $options = 0, int $decPl = null): ?string;
+    abstract public function format($options = null, int $decPl = null): ?string;
 
 
 
@@ -1452,7 +1431,6 @@ abstract class Base
     protected function internalMaxDecPl(int $maxDecPl = null): int
     {
         $maxDecPl = (!is_null($maxDecPl) ? $maxDecPl : $this->maxDecPl);
-        $maxDecPl = (static::$percentageMode ? $maxDecPl + 2 : $maxDecPl); // adjust for percent mode
         return (int) $maxDecPl;
     }
 
