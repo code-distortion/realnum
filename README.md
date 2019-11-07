@@ -49,7 +49,7 @@ print $num2->format();       // "9,999.99"
 
 You may set the value explicitly:
 ``` php
-$num1 = RealNum::new(5); // the value is set to 5 straight away
+$num1 = RealNum::new(5); // the value is set to 5 upon instantiation
 $num2 = $num1->val(10);  // and is then set to 10 (it's immutable so a new object is created)
 ```
 
@@ -77,7 +77,7 @@ You may also set other settings that RealNum uses:
 RealNum::new()->locale('en-US');              // sets the locale this object uses (see the 'locale' section below)
 RealNum::new()->maxDecPl(30);                 // sets the maximum number of decimal places used (see the 'precision (maximum decimal places)' section below)
 RealNum::new()->immutable(false);             // sets whether this object is immutable or not (see the 'immutability' section below)
-RealNum::new()->formatSettings('-thousands'); // sets the default options used when format() is called (see the 'formatting output' section below)
+RealNum::new()->formatSettings('-thousands'); // alters the default options used when format() is called (see the 'formatting output' section below)
 ```
 
 ### Retrieving values
@@ -153,7 +153,7 @@ RealNum::new(5)->greaterThanOrEqualTo(10); // alias of gte(..)
 RealNum::new(5)->greaterThan(10);          // alias of gt(..)
 
 $num1 = RealNum::new(5);
-$num2 = RealNum::new(6);
+$num2 = RealNum::new(10);
 $num1->lt($num2); // you can compare a RealNum with others
 ```
 
@@ -179,7 +179,11 @@ $num = RealNum::new(1234567.89);
 print $num->format(); // "1,234,567.89"
 ```
 
-You may alter the way `format()` renders the output by passing options. The options you can alter are: `thousands`, `showPlus`, `accountingNeg`, `nullString`, `nullZero`, `trailZeros`, `nbsp` and `locale=x`. You can negate a setting by adding `!` before it.
+You may alter the way `format()` renders the output by passing options. The options you can alter are:
+
+`thousands`, `showPlus`, `accountingNeg`, `nullString`, `nullZero`, `trailZeros`, `nbsp` and `locale=x`.
+
+You can negate an option by adding `!` before it.
 
 ***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
 
@@ -197,12 +201,12 @@ print RealNum::new(null)->format();             // null (actual null - default)
 print RealNum::new(null)->format('nullString'); // "null" (returned as a string)
 print RealNum::new(null)->format('nullZero');   // "0"
 
-print RealNum::new(1.23)->maxDecPl(5)->format('!trailZeros'); // "1.23" (cuts of trailing decimal 0's - default)
+print RealNum::new(1.23)->maxDecPl(5)->format('!trailZeros'); // "1.23" (cuts off trailing decimal 0's - default)
 print RealNum::new(1.23)->maxDecPl(5)->format('trailZeros');  // "1.23000" (shows the max available max-decimal-places)
 
 // non-breaking spaces can be returned instead of regular spaces - see the 'non-breaking whitespace' section below for more details
-print htmlentities(RealNum::new(1234567.89)->locale('sv-SE')->format('nbsp'));  // "1&nbsp;234&nbsp;567,89" (default)
-print htmlentities(RealNum::new(1234567.89)->locale('sv-SE')->format('!nbsp')); // "1 234 567,89" (regular spaces)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE nbsp'));  // "1&nbsp;234&nbsp;567,89" (default)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !nbsp')); // "1 234 567,89" (regular spaces)
 
 // the locale can be chosen at the time of formatting
 print RealNum::new(1234567.89)->format('locale=en');    // "1,234,567.89" (English - default)
@@ -213,13 +217,13 @@ print RealNum::new(1234567.89)->format('locale=sv');    // "1 234 567,89" (Swedi
 print RealNum::new(1234567.89)->format('locale=ar');    // "١٬٢٣٤٬٥٦٧٫٨٩" (Arabic)
 ```
 
-You may use several settings together:
+Multiple settings can be used together:
 
 ```php
 print RealNum::new(1234567.89)->format('!thousands showPlus locale=de-DE'); // "+1234567,89"
 ```
 
-You may also choose the number of decimal places to show at the time of rendering:
+You may also choose the number of decimal places to show at the time of rendering (this is different to the internal maxDecPl setting):
 
 ``` php
 print RealNum::new(1.23)->format(null, 5); // "1.23000" (5 decimal places)
@@ -233,7 +237,7 @@ print (string) RealNum::new(1234567.89); // "1,234,567.89"
 
 ***NOTE***: RealNum uses PHP's NumberFormatter to render the readable output, which currently has a limitation of being able to only show about 17 digits (including before the decimal place). So `format()`'s output will act a bit strangely if there are too many digits. The number stored inside will maintain it's full accuracy however. You may access the full number by reading the `val` property (see the [retrieving values](#retrieving-values) section above).
 
-### Default formatting settings
+### Default format settings
 
 RealNum uses these default settings when `format()` is called: `"thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros nbsp locale=en"`
 
@@ -246,7 +250,7 @@ $num1 = RealNum::new(1234567.89)->formatSettings('!thousands showPlus');
 print $num1->format(); // "+1234567.89" (no thousands separator, show-plus)
 ```
 
-These formating settings can be adjusted default. All ***new*** RealNum objects will start with this setting:
+The formating settings can be adjusted default. All ***new*** RealNum objects will start with this setting:
 
 ``` php
 var_dump(RealNum::getDefaultFormatSettings()); // ['thousands' => true, 'showPlus' => false ... ] (default)
@@ -341,7 +345,7 @@ $num2 = $num1->copy(); // this will return a clone regardless of the immutabilit
 
 ***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
 
-Some locales use spaces when rendering numbers (eg. Swedish use spaces for the thousands separator). `format()` can return strings containing either non-breaking whitespace characters,  or regular space characters.
+Some locales use spaces when rendering numbers (eg. Swedish uses spaces for the thousands separator). `format()` can return strings containing either non-breaking whitespace characters,  or regular space characters.
 
 An example of non-breaking whitespace is UTF-8's `\xc2\xa0` character which is used instead of a regular `\x20` space character. There are others like `\xe2\x80\xaf` which is a 'narrow no-break space'.
 

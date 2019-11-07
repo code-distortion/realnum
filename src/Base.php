@@ -8,18 +8,22 @@ use InvalidArgumentException;
 use NumberFormatter;
 
 /**
- * Arbitrary-precision floating-point numbers with localised rendering - Base class
- *
+ * Arbitrary-precision floating-point numbers with localised rendering.
  * Represents floating-point numbers, performs calculations & comparisons on them, and renders them.
- * PHP's bcmath functions are used internally.
+ *
+ * This is the base class. RealNum (and CodeDistortion/Currency/Currency) extend from this.
+ * Percent extends from RealNum.
+ *
+ * PHP's bcmath functions are used internally for the maths calculations.
+ * PHP's NumberFormatter is used to format the readable output.
  * @property ?callable $localeResolver
- * @property string   $locale
- * @property boolean  $immutable
+ * @property string    $locale
+ * @property boolean   $immutable
  * @property boolean   $noBreakWhitespace
  * @property array     $formatSettings
  * @property ?string   $val
  * @property ?float    $cast
-  */
+ */
 abstract class Base
 {
     /**

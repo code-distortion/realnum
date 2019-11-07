@@ -3,10 +3,8 @@
 namespace CodeDistortion\RealNum;
 
 /**
- * Manage percentage numbers with accuracy, renderable in different locales
- *
+ * Manage percentage numbers with accuracy, renderable in different locales.
  * Represent floating-point numbers, allow calculations & comparisons to be performed on them, and render them.
- * The bcmath functions are used internally.
  */
 class Percent extends RealNum
 {

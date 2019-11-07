@@ -7,12 +7,13 @@ use CodeDistortion\RealNum\Base;
 use NumberFormatter;
 
 /**
- * Arbitrary-precision floating-point numbers with localised rendering
- *
+ * Arbitrary-precision floating-point numbers with localised rendering.
  * Represents floating-point numbers, performs calculations & comparisons on them, and renders them.
- * PHP's bcmath functions are used internally.
+ *
+ * The Percent class extends from this.
+ *
  * @property integer $maxDecPl
-  */
+ */
 class RealNum extends Base
 {
     /**
