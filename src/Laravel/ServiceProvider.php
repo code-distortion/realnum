@@ -7,12 +7,13 @@ use CodeDistortion\RealNum\RealNum;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Events\EventDispatcher;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Throwable;
 
 /**
  * RealNum ServiceProvider for Laravel
  */
-class ServiceProvider extends \Illuminate\Support\ServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Service-provider register method

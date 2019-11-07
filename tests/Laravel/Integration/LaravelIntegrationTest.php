@@ -1,6 +1,6 @@
 <?php
 
-namespace CodeDistortion\RealNum\Tests\Laravel\Unit;
+namespace CodeDistortion\RealNum\Tests\Laravel\Integration;
 
 use App;
 use CodeDistortion\RealNum\RealNum;
@@ -12,7 +12,7 @@ use CodeDistortion\RealNum\Tests\Laravel\TestCase;
  *
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
-class LaravelUnitTest extends TestCase
+class LaravelIntegrationTest extends TestCase
 {
     /**
      * Test that the service-provider is registered in Laravel and acts correctly
@@ -24,9 +24,6 @@ class LaravelUnitTest extends TestCase
      */
     public function test_service_provider(): void
     {
-        $this->assertTrue(true);
-        return;
-
         $this->assertSame('en', RealNum::getDefaultLocale()); // default locale
         $this->assertSame('en', Percent::getDefaultLocale()); // default locale
         App::setLocale('en-AU');
