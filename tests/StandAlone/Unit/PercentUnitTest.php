@@ -98,7 +98,7 @@ class PercentUnitTest extends TestCase
                 $outputValues[13]];
             $return[] = [$locale, null, 20, 'nullString', $outputValues[14]];
             $return[] = [$locale, null, 20, null, $outputValues[15]];
-            $return[] = [$locale, 0.12345, 20, '-nbsp', $outputValues[16]];
+            $return[] = [$locale, 0.12345, 20, 'breaking', $outputValues[16]];
         }
 
         return $return;

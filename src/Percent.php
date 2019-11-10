@@ -37,7 +37,7 @@ class Percent extends RealNum
         'nullString' => false,
         'nullZero' => false,
         'trailZeros' => false,
-        'nbsp' => true,
+        'breaking' => false,
         'locale' => 'en',
     ];
 

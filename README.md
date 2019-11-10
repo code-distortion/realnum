@@ -94,11 +94,11 @@ You may also read other settings that RealNum uses:
 
 ``` php
 $num = RealNum::new();
-print $num->locale;            // "en"
-print $num->maxDecPl;          // 20 (the maximum number of decimal places used)
-print $num->immutable;         // true
-print $num->noBreakWhitespace; // true
-print $num->formatSettings;    // ['trailZeros' => false, 'thousands' => true, ... ]
+print $num->locale;         // "en"
+print $num->maxDecPl;       // 20 (the maximum number of decimal places used)
+print $num->immutable;      // true
+print $num->breaking;       // false
+print $num->formatSettings; // ['trailZeros' => false, 'thousands' => true, ... ]
 ```
 
 ***Note:*** See the [formatting output](#formatting-output) section below for more details about how to render the value as a readable string.
@@ -181,7 +181,7 @@ print $num->format(); // "1,234,567.89"
 
 You may alter the way `format()` renders the output by passing options. The options you can alter are:
 
-`thousands`, `showPlus`, `accountingNeg`, `nullString`, `nullZero`, `trailZeros`, `nbsp` and `locale=x`.
+`thousands`, `showPlus`, `accountingNeg`, `nullString`, `nullZero`, `trailZeros`, `breaking` and `locale=x`.
 
 You can negate an option by adding `!` before it.
 
@@ -205,8 +205,8 @@ print RealNum::new(1.23)->maxDecPl(5)->format('!trailZeros'); // "1.23" (cuts of
 print RealNum::new(1.23)->maxDecPl(5)->format('trailZeros');  // "1.23000" (shows the max available max-decimal-places)
 
 // non-breaking spaces can be returned instead of regular spaces - see the 'non-breaking whitespace' section below for more details
-print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE nbsp'));  // "1&nbsp;234&nbsp;567,89" (default)
-print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !nbsp')); // "1 234 567,89" (regular spaces)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !breaking'));  // "1&nbsp;234&nbsp;567,89" (default)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE breaking')); // "1 234 567,89" (regular spaces)
 
 // the locale can be chosen at the time of formatting
 print RealNum::new(1234567.89)->format('locale=en');    // "1,234,567.89" (English - default)
@@ -239,7 +239,7 @@ print (string) RealNum::new(1234567.89); // "1,234,567.89"
 
 ### Default format settings
 
-RealNum uses these default settings when `format()` is called: `"thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros nbsp locale=en"`
+RealNum uses these default settings when `format()` is called: `"thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros !breaking locale=en"`
 
 ***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays. The default options are stored internally as arrays.
 
@@ -355,22 +355,22 @@ Because `format()` is designed to produce readable numbers for humans, RealNum u
 
 ``` php
 $num = RealNum::new(1234567.89)->locale('sv-SE'); // Swedish
-print htmlentities($num->format('nbsp'));  // "1&nbsp;234&nbsp;567,89" (contains non-breaking whitespace - default)
-print htmlentities($num->format('!nbsp')); // "1 234 567,89" (regular spaces)
+print htmlentities($num->format('!breaking'));    // "1&nbsp;234&nbsp;567,89" (contains non-breaking whitespace - default)
+print htmlentities($num->format('breaking'));     // "1 234 567,89" (regular spaces)
 ```
 
 Non-breaking whitespace may be turned off per-object:
 
 ``` php
-$num1 = RealNum::new(1234567.89)->locale('sv-SE')->noBreakWhitespace(false);
+$num1 = RealNum::new(1234567.89)->locale('sv-SE')->breaking(true);
 print htmlentities($num1->format()); // "1 234 567,89" (regular spaces)
 ```
 
 Non-breaking whitespace may be turned off by default. All ***new*** RealNum objects will start with this setting:
 
 ``` php
-RealNum::setDefaultNoBreakWhitespace(false);
-var_dump(RealNum::getDefaultNoBreakWhitespace()); // false
+RealNum::setDefaultBreaking(true);
+var_dump(RealNum::getDefaultBreaking()); // true
 ```
 
 ### Chaining

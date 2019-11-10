@@ -17,9 +17,10 @@ use NumberFormatter;
  * PHP's bcmath functions are used internally for the maths calculations.
  * PHP's NumberFormatter is used to format the readable output.
  * @property ?callable $localeResolver
+ * @property integer   $maxDecPl
  * @property string    $locale
  * @property boolean   $immutable
- * @property boolean   $noBreakWhitespace
+ * @property boolean   $breaking
  * @property array     $formatSettings
  * @property ?string   $val
  * @property ?float    $cast
@@ -241,20 +242,20 @@ abstract class Base
      *
      * @return boolean
      */
-    public static function getDefaultNoBreakWhitespace(): bool
+    public static function getDefaultBreaking(): bool
     {
-        return static::$defaultFormatSettings['nbsp'];
+        return static::$defaultFormatSettings['breaking'];
     }
 
     /**
      * Update the default non-breaking-whitespace setting
      *
-     * @param boolean $noBreakWhitespace The non-breaking-whitespace setting to set.
+     * @param boolean $breaking The non-breaking-whitespace setting to set.
      * @return void
      */
-    public static function setDefaultNoBreakWhitespace(bool $noBreakWhitespace): void
+    public static function setDefaultBreaking(bool $breaking): void
     {
-        static::$defaultFormatSettings['nbsp'] = $noBreakWhitespace;
+        static::$defaultFormatSettings['breaking'] = $breaking;
     }
 
     /**
@@ -304,8 +305,8 @@ abstract class Base
                 return $this->effectiveImmutable();
 
             // return the no-break whitespace setting
-            case 'noBreakWhitespace':
-                return $this->formatSettings['nbsp'];
+            case 'breaking':
+                return $this->formatSettings['breaking'];
 
             // return the formatSettings
             case 'formatSettings':
@@ -355,8 +356,8 @@ abstract class Base
         //         return;
 
         //     // set the no-break whitespace setting this object uses
-        //     case 'noBreakWhitespace':
-        //         $this->formatSettinsg['nbsp'] = (bool) $value;
+        //     case 'breaking':
+        //         $this->formatSettinsg['breaking'] = (bool) $value;
         //         return;
 
         //     // set the format-settings-setting this object uses
@@ -480,13 +481,13 @@ abstract class Base
     /**
      * Set the non-breaking-whitespace setting this object uses
      *
-     * @param boolean $noBreakWhitespace The new non-breaking-whitespace setting to use.
+     * @param boolean $breaking The new non-breaking-whitespace setting to use.
      * @return static
      */
-    public function noBreakWhitespace(bool $noBreakWhitespace): self
+    public function breaking(bool $breaking): self
     {
         $realNum = $this->immute();
-        $realNum->formatSettings['nbsp'] = $noBreakWhitespace;
+        $realNum->formatSettings['breaking'] = $breaking;
         return $realNum; // chainable - immutable
     }
 
@@ -1126,7 +1127,7 @@ abstract class Base
      * @param string          $locale             The locale to use when rendering the number.
      * @param boolean         $accountingNegative Render negatives with brackets.
      * @param boolean         $showPlus           Show a '+' character for positive values.
-     * @param boolean         $noBreakWhitespace  Replace non-breaking spaces etc with regular spaces.
+     * @param boolean         $breaking           Replace non-breaking spaces etc with regular spaces?.
      * @param NumberFormatter $numberFormatter    The object used to render the number.
      * @param callable        $renderNumber       A callback to render a value.
      * @return string
@@ -1137,7 +1138,7 @@ abstract class Base
         string $locale,
         bool $accountingNegative,
         bool $showPlus,
-        bool $noBreakWhitespace,
+        bool $breaking,
         NumberFormatter $numberFormatter,
         callable $renderNumber
     ): string {
@@ -1181,7 +1182,7 @@ abstract class Base
         }
 
         // replace non-breaking whitespace if desired
-        if (!$noBreakWhitespace) {
+        if ($breaking) {
             // replace NON-BREAKING SPACE and NARROW NO-BREAK SPACE with regular spaces
             $return = str_replace(["\xc2\xa0", "\xe2\x80\xaf"], ' ', $return);
         }

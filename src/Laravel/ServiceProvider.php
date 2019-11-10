@@ -11,7 +11,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Throwable;
 
 /**
- * RealNum ServiceProvider for Laravel
+ * RealNum & Percent ServiceProvider for Laravel
  */
 class ServiceProvider extends BaseServiceProvider
 {

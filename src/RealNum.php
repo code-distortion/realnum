@@ -11,8 +11,6 @@ use NumberFormatter;
  * Represents floating-point numbers, performs calculations & comparisons on them, and renders them.
  *
  * The Percent class extends from this.
- *
- * @property integer $maxDecPl
  */
 class RealNum extends Base
 {
@@ -26,7 +24,7 @@ class RealNum extends Base
         'nullString' => false,
         'nullZero' => false,
         'trailZeros' => false,
-        'nbsp' => true,
+        'breaking' => false,
         'locale' => 'en',
     ];
 
@@ -61,7 +59,7 @@ class RealNum extends Base
         'nullString' => false,
         'nullZero' => false,
         'trailZeros' => false,
-        'nbsp' => true,
+        'breaking' => false,
         'locale' => 'en',
     ];
 
@@ -234,7 +232,7 @@ class RealNum extends Base
                 $locale,
                 (bool) $options['accountingNeg'],
                 (bool) $options['showPlus'],
-                (bool) $options['nbsp'],
+                (bool) $options['breaking'],
                 $numberFormatter,
                 $callback
             );

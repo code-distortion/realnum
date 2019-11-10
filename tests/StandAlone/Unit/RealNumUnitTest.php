@@ -30,7 +30,7 @@ class RealNumUnitTest extends TestCase
         'nullString' => true,
         'nullZero' => true,
         'trailZeros' => true,
-        'nbsp' => false,
+        'breaking' => true,
         'locale' => 'en-US',
     ];
 
@@ -59,7 +59,7 @@ class RealNumUnitTest extends TestCase
             ['locale', 'locale', 'en-AU', 'en-NZ'],
             ['maxDecPl', 'maxDecPl', 13, 14],
             ['immutable', 'immutable', true, false],
-            ['noBreakWhitespace', 'noBreakWhitespace', true, false],
+            ['breaking', 'breaking', true, false],
             ['formatSettings', 'formatSettings', $this->altFormatSettings, RealNum::ORIG_FORMAT_SETTINGS],
             ['val', 'val', '1.00000000000000000000', '2.00000000000000000000'],
             ['cast', 'cast', 1, 2],
@@ -258,7 +258,7 @@ class RealNumUnitTest extends TestCase
             $return[] = [$locale, 12345678, 20, null, $outputValues[5]];
             $return[] = [$locale, 12345678.9, 3, 'trailZeros', $outputValues[6]];
             $return[] = [$locale, 12345678, 3, 'trailZeros', $outputValues[7]];
-            $return[] = [$locale, 12345678, 20, '-thousands', $outputValues[8]];
+            $return[] = [$locale, 12345678, 20, '!thousands', $outputValues[8]];
             $return[] = [$locale, null, 20, 'nullZero', $outputValues[9]];
 
             $return[] = [$locale,
@@ -277,7 +277,7 @@ class RealNumUnitTest extends TestCase
 
             $return[] = [$locale, null, 20, 'nullString', $outputValues[12]];
             $return[] = [$locale, null, 20, null, $outputValues[13]];
-            $return[] = [$locale, 12345678.9, 20, '-nbsp', $outputValues[14]];
+            $return[] = [$locale, 12345678.9, 20, 'breaking', $outputValues[14]];
             $return[] = [$locale, 12345678.9, 20, 'locale=en-AU', $outputValues[15]];
         }
 
@@ -325,11 +325,11 @@ class RealNumUnitTest extends TestCase
 
         // check the default non-breaking-whitespace setting
         RealNum::resetDefaults();
-        $this->assertTrue(RealNum::getDefaultNoBreakWhitespace());
-        $this->assertTrue(RealNum::new()->noBreakWhitespace); // uses the default
-        RealNum::setDefaultNoBreakWhitespace(false);
-        $this->assertFalse(RealNum::getDefaultNoBreakWhitespace());
-        $this->assertFalse(RealNum::new()->noBreakWhitespace); // uses the new default
+        $this->assertFalse(RealNum::getDefaultBreaking());
+        $this->assertFalse(RealNum::new()->breaking); // uses the default
+        RealNum::setDefaultBreaking(true);
+        $this->assertTrue(RealNum::getDefaultBreaking());
+        $this->assertTrue(RealNum::new()->breaking); // uses the new default
 
         // check the default immutable-setting
         RealNum::resetDefaults();
@@ -344,7 +344,7 @@ class RealNumUnitTest extends TestCase
         $this->assertSame('en', RealNum::getDefaultLocale());
         $this->assertSame(20, RealNum::getDefaultMaxDecPL());
         $this->assertTrue(RealNum::getDefaultImmutability());
-        $this->assertTrue(RealNum::getDefaultNoBreakWhitespace());
+        $this->assertFalse(RealNum::getDefaultBreaking());
     }
 
     /**
@@ -485,9 +485,9 @@ class RealNumUnitTest extends TestCase
         $this->assertTrue(RealNum::new()->immutable); // is the default
         $this->assertFalse(RealNum::new()->immutable(false)->immutable);
 
-        // noBreakWhitespace
-        $this->assertTrue(RealNum::new()->noBreakWhitespace); // is the default
-        $this->assertFalse(RealNum::new()->noBreakWhitespace(false)->noBreakWhitespace);
+        // breaking
+        $this->assertFalse(RealNum::new()->breaking); // is the default
+        $this->assertTrue(RealNum::new()->breaking(true)->breaking);
 
         // formatSettings
         $this->assertSame(RealNum::ORIG_FORMAT_SETTINGS, RealNum::new()->formatSettings); // is the default
@@ -863,19 +863,19 @@ class RealNumUnitTest extends TestCase
 
         // test that the default non-breaking-whitespace setting triggers it to render with whitespace
         // without having to pass RealNum::NO_BREAK_WHITESPACE each time to ->format()
-        RealNum::setDefaultNoBreakWhitespace(true);
+        RealNum::setDefaultBreaking(false);
         $this->assertSame('1 234 567,89', RealNum::new(1234567.89)->locale('sv-SE')->format());
-        RealNum::setDefaultNoBreakWhitespace(false);
+        RealNum::setDefaultBreaking(true);
         $this->assertSame('1 234 567,89', RealNum::new(1234567.89)->locale('sv-SE')->format());
         RealNum::resetDefaults();
 
         $this->assertSame(
             '1 234 567,89',
-            RealNum::new(1234567.89)->locale('sv-SE')->noBreakWhitespace(true)->format()
+            RealNum::new(1234567.89)->locale('sv-SE')->breaking(false)->format()
         );
         $this->assertSame(
             '1 234 567,89',
-            RealNum::new(1234567.89)->locale('sv-SE')->noBreakWhitespace(false)->format()
+            RealNum::new(1234567.89)->locale('sv-SE')->breaking(true)->format()
         );
     }
 
