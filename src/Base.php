@@ -20,7 +20,6 @@ use NumberFormatter;
  * @property integer   $maxDecPl
  * @property string    $locale
  * @property boolean   $immutable
- * @property boolean   $breaking
  * @property array     $formatSettings
  * @property ?string   $val
  * @property ?float    $cast
@@ -238,27 +237,6 @@ abstract class Base
     }
 
     /**
-     * Retrieve the default non-breaking-whitespace setting
-     *
-     * @return boolean
-     */
-    public static function getDefaultBreaking(): bool
-    {
-        return static::$defaultFormatSettings['breaking'];
-    }
-
-    /**
-     * Update the default non-breaking-whitespace setting
-     *
-     * @param boolean $breaking The non-breaking-whitespace setting to set.
-     * @return void
-     */
-    public static function setDefaultBreaking(bool $breaking): void
-    {
-        static::$defaultFormatSettings['breaking'] = $breaking;
-    }
-
-    /**
      * Retrieve the default format settings
      *
      * @return array
@@ -303,10 +281,6 @@ abstract class Base
             // return the immutable-setting
             case 'immutable':
                 return $this->effectiveImmutable();
-
-            // return the no-break whitespace setting
-            case 'breaking':
-                return $this->formatSettings['breaking'];
 
             // return the formatSettings
             case 'formatSettings':
@@ -353,11 +327,6 @@ abstract class Base
         //     // set the immutable-setting this object uses
         //     case 'immutable':
         //         $this->immutable = (!is_null($value) ? (bool) $value : null);
-        //         return;
-
-        //     // set the no-break whitespace setting this object uses
-        //     case 'breaking':
-        //         $this->formatSettinsg['breaking'] = (bool) $value;
         //         return;
 
         //     // set the format-settings-setting this object uses
@@ -475,19 +444,6 @@ abstract class Base
     {
         $realNum = $this->immute();
         $realNum->immutable = $immutable;
-        return $realNum; // chainable - immutable
-    }
-
-    /**
-     * Set the non-breaking-whitespace setting this object uses
-     *
-     * @param boolean $breaking The new non-breaking-whitespace setting to use.
-     * @return static
-     */
-    public function breaking(bool $breaking): self
-    {
-        $realNum = $this->immute();
-        $realNum->formatSettings['breaking'] = $breaking;
         return $realNum; // chainable - immutable
     }
 
@@ -1307,7 +1263,7 @@ abstract class Base
         if (is_numeric($value)) {
             return (string) $value; // turn it into a string
         }
-        if (mb_strtolower($value) == 'null') {
+        if ((is_string($value)) && (mb_strtolower($value) == 'null')) {
             return null;
         }
 

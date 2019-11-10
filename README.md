@@ -56,15 +56,15 @@ $num2 = $num1->val(10);  // and is then set to 10 (it's immutable so a new objec
 The types of values you can pass to RealNum are:
 
 ``` php
-$num1 = RealNum::new(5);     // an integer
-$num2 = RealNum::new(5.5);   // a float
-$num3 = RealNum::new('6');   // a numeric string
-$num4 = RealNum::new($num3); // another RealNum object
-$num5 = RealNum::new(null);  // null
-$num6 = RealNum::new();      // (will default to null)
+$num1 = RealNum::new(5);       // an integer
+$num2 = RealNum::new(5.5);     // a float
+$num3 = RealNum::new('6.789'); // a numeric string
+$num4 = RealNum::new($num3);   // another RealNum object
+$num5 = RealNum::new(null);    // null
+$num6 = RealNum::new();        // (will default to null)
 ```
 
-***TIP:*** To maintain precision when setting values, pass them as strings instead of floating-point numbers:
+***TIP:*** To maintain precision when passing values, pass them as strings instead of floating-point numbers:
 
 ``` php
 RealNum::new(0.12345678901234567890);   // "0.12345678901235" (precision lost because the number passed is really a float)
@@ -77,7 +77,7 @@ You may also set other settings that RealNum uses:
 RealNum::new()->locale('en-US');              // sets the locale this object uses (see the 'locale' section below)
 RealNum::new()->maxDecPl(30);                 // sets the maximum number of decimal places used (see the 'precision (maximum decimal places)' section below)
 RealNum::new()->immutable(false);             // sets whether this object is immutable or not (see the 'immutability' section below)
-RealNum::new()->formatSettings('-thousands'); // alters the default options used when format() is called (see the 'formatting output' section below)
+RealNum::new()->formatSettings('!thousands'); // alters the default options used when format() is called (see the 'formatting output' section below)
 ```
 
 ### Retrieving values
@@ -97,7 +97,6 @@ $num = RealNum::new();
 print $num->locale;         // "en"
 print $num->maxDecPl;       // 20 (the maximum number of decimal places used)
 print $num->immutable;      // true
-print $num->breaking;       // false
 print $num->formatSettings; // ['trailZeros' => false, 'thousands' => true, ... ]
 ```
 
@@ -194,7 +193,7 @@ print RealNum::new(1234567.89)->format('!thousands'); // "1234567.89" (removes t
 print RealNum::new(1234)->format('showPlus');  // "+1,234" (adds a '+' for positive values)
 print RealNum::new(1234)->format('!showPlus'); // "1,234" (default)
 
-print RealNum::new(-1234)->format('accountingNeg');  // "(1,234)" (uses brackets for negative numbers)
+print RealNum::new(-1234)->format('accountingNeg');  // "(1,234)" (accounting negative - uses brackets for negative numbers)
 print RealNum::new(-1234)->format('!accountingNeg'); // "-1,234" (default)
 
 print RealNum::new(null)->format();             // null (actual null - default)
@@ -205,8 +204,8 @@ print RealNum::new(1.23)->maxDecPl(5)->format('!trailZeros'); // "1.23" (cuts of
 print RealNum::new(1.23)->maxDecPl(5)->format('trailZeros');  // "1.23000" (shows the max available max-decimal-places)
 
 // non-breaking spaces can be returned instead of regular spaces - see the 'non-breaking whitespace' section below for more details
-print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !breaking'));  // "1&nbsp;234&nbsp;567,89" (default)
-print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE breaking')); // "1 234 567,89" (regular spaces)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !breaking')); // "1&nbsp;234&nbsp;567,89" (default)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE breaking'));  // "1 234 567,89" (regular spaces)
 
 // the locale can be chosen at the time of formatting
 print RealNum::new(1234567.89)->format('locale=en');    // "1,234,567.89" (English - default)
@@ -241,6 +240,8 @@ print (string) RealNum::new(1234567.89); // "1,234,567.89"
 
 RealNum uses these default settings when `format()` is called: `"thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros !breaking locale=en"`
 
+***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
+
 ***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays. The default options are stored internally as arrays.
 
 These can be adjusted per-object:
@@ -250,7 +251,7 @@ $num1 = RealNum::new(1234567.89)->formatSettings('!thousands showPlus');
 print $num1->format(); // "+1234567.89" (no thousands separator, show-plus)
 ```
 
-The formating settings can be adjusted default. All ***new*** RealNum objects will start with this setting:
+The default format-settings can be adjusted. All ***new*** RealNum objects will start with this setting:
 
 ``` php
 var_dump(RealNum::getDefaultFormatSettings()); // ['thousands' => true, 'showPlus' => false ... ] (default)
@@ -292,7 +293,7 @@ print RealNum::getDefaultLocale(); // "fr-FR"
 The `maxDecPl` precision setting is the maximum number of decimal places you would like RealNum to handle. A maxDecPl of 20 is used by default but you may change this per-object:
 
 ``` php
-$num = RealNum::new('0.123456789012345678901234567890'); // this has more decimals than a float can handle so pass it as a string
+$num = RealNum::new('0.123456789012345678901234567890'); // passed as a string to maintain precision
 print $num->val; // "0.12345678901234567890" ie. rounded to the default 20 decimal places
 $num = RealNum::new()->maxDecPl(30)->val('0.123456789012345678901234567890');
 print $num->val; // "0.123456789012345678901234567890" the full 30 decimal places
@@ -343,8 +344,6 @@ $num2 = $num1->copy(); // this will return a clone regardless of the immutabilit
 
 ### Non-breaking whitespace
 
-***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
-
 Some locales use spaces when rendering numbers (eg. Swedish uses spaces for the thousands separator). `format()` can return strings containing either non-breaking whitespace characters,  or regular space characters.
 
 An example of non-breaking whitespace is UTF-8's `\xc2\xa0` character which is used instead of a regular `\x20` space character. There are others like `\xe2\x80\xaf` which is a 'narrow no-break space'.
@@ -359,19 +358,7 @@ print htmlentities($num->format('!breaking'));    // "1&nbsp;234&nbsp;567,89" (c
 print htmlentities($num->format('breaking'));     // "1 234 567,89" (regular spaces)
 ```
 
-Non-breaking whitespace may be turned off per-object:
-
-``` php
-$num1 = RealNum::new(1234567.89)->locale('sv-SE')->breaking(true);
-print htmlentities($num1->format()); // "1 234 567,89" (regular spaces)
-```
-
-Non-breaking whitespace may be turned off by default. All ***new*** RealNum objects will start with this setting:
-
-``` php
-RealNum::setDefaultBreaking(true);
-var_dump(RealNum::getDefaultBreaking()); // true
-```
+***Tip:*** The non-breaking whitespace setting can be changed per-object and by default. See the [formatting output](#formatting-output) and [default format settings](#default-format-settings) sections above.
 
 ### Chaining
 

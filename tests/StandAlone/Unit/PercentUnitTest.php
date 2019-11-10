@@ -109,7 +109,7 @@ class PercentUnitTest extends TestCase
 
 
     /**
-     * Test the ways the default locale, maxDecPl, immutability non-breaking-whitespace settings are altered
+     * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered
      *
      * @test
      * @return void
