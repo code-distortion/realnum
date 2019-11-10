@@ -31,14 +31,14 @@ class Percent extends RealNum
      * @var array
      */
     protected static $defaultFormatSettings = [
+        'null' => null,
+        'trailZeros' => false,
+        'decPl' => null,
         'thousands' => true,
         'showPlus' => false,
         'accountingNeg' => false,
-        'nullString' => false,
-        'nullZero' => false,
-        'trailZeros' => false,
-        'breaking' => false,
         'locale' => 'en',
+        'breaking' => false,
     ];
 
 

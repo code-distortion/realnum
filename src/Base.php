@@ -1034,8 +1034,8 @@ abstract class Base
 
         if (!is_null($value)) {
 
-            $start = static::extractBasicValue($start, $decPl, $throwException);
-            $end = static::extractBasicValue($end, $decPl, $throwException);
+            $start = static::extractBasicValue($start, $decPl, true, $throwException);
+            $end = static::extractBasicValue($end, $decPl, true, $throwException);
             $min = $max = null;
 
             // between $start and $end (doesn't matter the order)
@@ -1150,10 +1150,9 @@ abstract class Base
      * Format the current number in a readable way
      *
      * @param string|array|null $options The options to use when rendering the number.
-     * @param integer|null      $decPl   The number of decimal places to render to.
      * @return string
      */
-    abstract public function format($options = null, int $decPl = null): ?string;
+    abstract public function format($options = null): ?string;
 
 
 
@@ -1213,7 +1212,7 @@ abstract class Base
     protected function setValue($value, bool $throwException = true): self
     {
         $decPl = $maxDecPl = $this->internalMaxDecPl();
-        $value = static::extractBasicValue($value, $decPl, $throwException);
+        $value = static::extractBasicValue($value, $decPl, true, $throwException);
         $this->value = static::roundCalculation($value, $decPl, $maxDecPl);
         return $this; // chainable - NOT immutable
     }
@@ -1245,28 +1244,41 @@ abstract class Base
      * used
      *
      * Return it as a string for bcmath (or null)
-     * @param integer|float|string|self|null $value          The value to check.
-     * @param integer                        $decPl          The bcmath decimal places to use.
-     * @param boolean                        $throwException Should an exception be thrown if the $value is invalid?.
+     * @param integer|float|string|self|null $value           The value to check.
+     * @param integer                        $decPl           The bcmath decimal places to use.
+     * @param boolean                        $allowNullString When true a 'null' string will be picked up as null.
+     * @param boolean                        $throwException  Should an exception be thrown if the $value is invalid?.
      * @return string|null
      * @throws \InvalidArgumentException Thrown when $value is invalid.
      */
-    private static function extractBasicValue($value, int $decPl, bool $throwException = true): ?string
-    {
+    protected static function extractBasicValue(
+        $value,
+        int $decPl,
+        bool $allowNullString = true,
+        bool $throwException = true
+    ): ?string {
+
+        // just regular null
         if (is_null($value)) {
             return null;
         }
+
+        // another Base object
         if ($value instanceof self) {
             $value = $value->getVal();
         }
 
+        // an int/float/numeric-string
         if (is_numeric($value)) {
             return (string) $value; // turn it into a string
         }
-        if ((is_string($value)) && (mb_strtolower($value) == 'null')) {
+
+        // pick up a 'null' string as null
+        if (($allowNullString) && (is_string($value)) && (mb_strtolower($value) == 'null')) {
             return null;
         }
 
+        // otherwise fail
         if ($throwException) {
             throw new InvalidArgumentException('The given value \''.$value.'\' is not numeric');
         }

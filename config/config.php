@@ -35,7 +35,7 @@ return [
     | called. You can adjust these by adding values to the string below.
     | You may choose from the possible values below.
     |
-    | default: 'thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros !breaking',
+    | default: 'null=null !trailZeros decPl=null thousands !showPlus !accountingNeg !breaking',
     |
     */
     'format_settings' => null,

@@ -97,7 +97,7 @@ $num = RealNum::new();
 print $num->locale;         // "en"
 print $num->maxDecPl;       // 20 (the maximum number of decimal places used)
 print $num->immutable;      // true
-print $num->formatSettings; // ['trailZeros' => false, 'thousands' => true, ... ]
+print $num->formatSettings; // ['null' => null, 'trailZeros' => null … ]
 ```
 
 ***Note:*** See the [formatting output](#formatting-output) section below for more details about how to render the value as a readable string.
@@ -125,7 +125,7 @@ You may pass multiple values to `add()`, `sub()`, `div()` and `mul()`:
 ```php
 RealNum::new(5)->add(4, 3, 2, 1); // 15
 RealNum::new(5)->sub(4, 3, 2, 1); // -5
-RealNum::new(5)->div(4, 3, 2, 1); // 0.2083333...
+RealNum::new(5)->div(4, 3, 2, 1); // 0.2083333…
 RealNum::new(5)->mul(4, 3, 2, 1); // 120
 ```
 
@@ -133,12 +133,12 @@ You may pass: *integer*, *float*, *numeric string* and *null* values, as well as
 
 ```php
 $num1 = RealNum::new(5);
-$num1 = $num1->add(2);     // pass an integer
-$num1 = $num1->add(2.0);   // pass a float
-$num1 = $num1->add('2');   // pass a numeric string
-$num1 = $num1->add(null);  // pass null (adds nothing)
+$num1 = $num1->add(2);       // pass an integer
+$num1 = $num1->add(2.0);     // pass a float
+$num1 = $num1->add('2.345'); // pass a numeric string
+$num1 = $num1->add(null);    // pass null (adds nothing)
 $num2 = RealNum::new(2);
-$num1 = $num1->add($num2); // pass another RealNum
+$num1 = $num1->add($num2);   // pass another RealNum object
 ```
 
 ### Comparisons
@@ -180,13 +180,29 @@ print $num->format(); // "1,234,567.89"
 
 You may alter the way `format()` renders the output by passing options. The options you can alter are:
 
-`thousands`, `showPlus`, `accountingNeg`, `nullString`, `nullZero`, `trailZeros`, `breaking` and `locale=x`.
+`null=x`, `trailZeros`, `decPl=x`, `thousands`, `showPlus`, `accountingNeg`, `locale=x` and `breaking`.
 
-You can negate an option by adding `!` before it.
+Options without a value can be negated by adding `!` before it.
 
 ***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
 
 ``` php
+print RealNum::new(null)->format('null=null');   // null (actual null - default)
+print RealNum::new(null)->format('null="null"'); // "null" (returned as a string)
+print RealNum::new(null)->format('null=0');      // "0"
+
+print RealNum::new(1.23)->maxDecPl(5)->format('!trailZeros'); // "1.23" (cuts off trailing decimal 0's - default)
+print RealNum::new(1.23)->maxDecPl(5)->format('trailZeros');  // "1.23000" (shows the maximum available decimal-places)
+
+// the number can be rounded and shown to a specific number of decimal places (this is different to the internal maxDecPl setting)
+print RealNum::new(1.9876)->format('decPl=null'); // "1.9876" (no rounding - default)
+print RealNum::new(1.9876)->format('decPl=0');    // "2" (rounded and shown to 0 decimal places)
+print RealNum::new(1.9876)->format('decPl=1');    // "2.0" (rounded and shown to 1 decimal place)
+print RealNum::new(1.9876)->format('decPl=2');    // "1.99" (rounded and shown to 2 decimal places)
+print RealNum::new(1.9876)->format('decPl=6');    // "1.987600" (rounded and shown to 6 decimal places)
+// the extra trailing zeros can be removed again with !trailZeros
+print RealNum::new(1.9876)->format('decPl=6 !trailZeros');  // "1.9876" (rounded to 6 decimal places with the trailing zeros removed)
+
 print RealNum::new(1234567.89)->format('thousands');  // "1,234,567.89" (default)
 print RealNum::new(1234567.89)->format('!thousands'); // "1234567.89" (removes the thousands separator)
 
@@ -196,36 +212,23 @@ print RealNum::new(1234)->format('!showPlus'); // "1,234" (default)
 print RealNum::new(-1234)->format('accountingNeg');  // "(1,234)" (accounting negative - uses brackets for negative numbers)
 print RealNum::new(-1234)->format('!accountingNeg'); // "-1,234" (default)
 
-print RealNum::new(null)->format();             // null (actual null - default)
-print RealNum::new(null)->format('nullString'); // "null" (returned as a string)
-print RealNum::new(null)->format('nullZero');   // "0"
-
-print RealNum::new(1.23)->maxDecPl(5)->format('!trailZeros'); // "1.23" (cuts off trailing decimal 0's - default)
-print RealNum::new(1.23)->maxDecPl(5)->format('trailZeros');  // "1.23000" (shows the max available max-decimal-places)
-
-// non-breaking spaces can be returned instead of regular spaces - see the 'non-breaking whitespace' section below for more details
-print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !breaking')); // "1&nbsp;234&nbsp;567,89" (default)
-print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE breaking'));  // "1 234 567,89" (regular spaces)
-
-// the locale can be chosen at the time of formatting
+// the locale can be chosen at the time of formatting - see the 'local' section below for more details
 print RealNum::new(1234567.89)->format('locale=en');    // "1,234,567.89" (English - default)
 print RealNum::new(1234567.89)->format('locale=en-AU'); // "1,234,567.89" (Australian English)
 print RealNum::new(1234567.89)->format('locale=en-IN'); // "12,34,567.89" (Indian English)
 print RealNum::new(1234567.89)->format('locale=de');    // "1.234.567,89" (German)
 print RealNum::new(1234567.89)->format('locale=sv');    // "1 234 567,89" (Swedish)
 print RealNum::new(1234567.89)->format('locale=ar');    // "١٬٢٣٤٬٥٦٧٫٨٩" (Arabic)
+
+// non-breaking spaces can be returned instead of regular spaces - see the 'non-breaking whitespace' section below for more details
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE !breaking')); // "1&nbsp;234&nbsp;567,89" (default)
+print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE breaking'));  // "1 234 567,89" (regular spaces)
 ```
 
 Multiple settings can be used together:
 
 ```php
 print RealNum::new(1234567.89)->format('!thousands showPlus locale=de-DE'); // "+1234567,89"
-```
-
-You may also choose the number of decimal places to show at the time of rendering (this is different to the internal maxDecPl setting):
-
-``` php
-print RealNum::new(1.23)->format(null, 5); // "1.23000" (5 decimal places)
 ```
 
 Casting a RealNum to a string is equivalent to calling `format()` with no arguments:
@@ -238,7 +241,7 @@ print (string) RealNum::new(1234567.89); // "1,234,567.89"
 
 ### Default format settings
 
-RealNum uses these default settings when `format()` is called: `"thousands !showPlus !accountingNeg !nullString !nullZero !trailZeros !breaking locale=en"`
+RealNum uses these default settings when `format()` is called: `"null=null !trailZeros decPl=null thousands !showPlus !accountingNeg locale=en !breaking"`
 
 ***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
 
@@ -254,9 +257,9 @@ print $num1->format(); // "+1234567.89" (no thousands separator, show-plus)
 The default format-settings can be adjusted. All ***new*** RealNum objects will start with this setting:
 
 ``` php
-var_dump(RealNum::getDefaultFormatSettings()); // ['thousands' => true, 'showPlus' => false ... ] (default)
-RealNum::setDefaultFormatSettings('!thousands showPlus');
-var_dump(RealNum::getDefaultFormatSettings()); // ['thousands' => false, 'showPlus' => true ... ]
+var_dump(RealNum::getDefaultFormatSettings()); // ['null' => null, 'trailZeros' => false … ] (default)
+RealNum::setDefaultFormatSettings('null="NULL" trailZeros');
+var_dump(RealNum::getDefaultFormatSettings()); // ['null' => 'NULL', 'trailZeros' => true … ]
 ```
 
 ### Locale
@@ -408,9 +411,9 @@ RealNum integrates with Laravel 5.5+ automatically thanks to Laravel's package a
 
 ``` php
 'providers' => [
-  ...
+  …
 CodeDistortion\RealNum\Laravel\ServiceProvider::class,
-  ...
+  …
 ],
 ```
 
@@ -418,7 +421,7 @@ The service-provider will register the starting locale with RealNum and Percent 
 
 #### Config
 
-You may specify default max-dec-pl, immutability and format-setting values by publishing the **config/realnum.php** config file and updating it:
+You may specify default max-dec-pl, immutability and format-settings by publishing the **config/realnum.php** config file and updating it:
 
 ``` bash
 php artisan vendor:publish --provider="CodeDistortion\RealNum\Laravel\ServiceProvider" --tag="config"

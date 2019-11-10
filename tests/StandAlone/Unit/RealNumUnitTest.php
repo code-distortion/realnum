@@ -24,15 +24,16 @@ class RealNumUnitTest extends TestCase
      * @var array
      */
     protected $altFormatSettings = [
+        'null' => 'null',
+        'trailZeros' => true,
+        'decPl' => 5,
         'thousands' => false,
         'showPlus' => true,
         'accountingNeg' => true,
-        'nullString' => true,
-        'nullZero' => true,
-        'trailZeros' => true,
-        'breaking' => true,
         'locale' => 'en-US',
+        'breaking' => true,
     ];
+
 
 
     /**
@@ -258,7 +259,7 @@ class RealNumUnitTest extends TestCase
             $return[] = [$locale, 12345678.9, 3, 'trailZeros', $outputValues[6]];
             $return[] = [$locale, 12345678, 3, 'trailZeros', $outputValues[7]];
             $return[] = [$locale, 12345678, 20, '!thousands', $outputValues[8]];
-            $return[] = [$locale, null, 20, 'nullZero', $outputValues[9]];
+            $return[] = [$locale, null, 20, 'null=0', $outputValues[9]];
 
             $return[] = [$locale,
                 12345678,
@@ -271,10 +272,10 @@ class RealNumUnitTest extends TestCase
                 $locale,
                 -12345678,
                 20,
-                'trailZeros -thousands accountingNeg showPlus nullZero nullString',
+                'trailZeros -thousands accountingNeg showPlus null="null"',
                 $outputValues[11]];
 
-            $return[] = [$locale, null, 20, 'nullString', $outputValues[12]];
+            $return[] = [$locale, null, 20, 'null="null"', $outputValues[12]];
             $return[] = [$locale, null, 20, null, $outputValues[13]];
             $return[] = [$locale, 12345678.9, 20, 'breaking', $outputValues[14]];
             $return[] = [$locale, 12345678.9, 20, 'locale=en-AU', $outputValues[15]];
@@ -840,7 +841,7 @@ class RealNumUnitTest extends TestCase
 
         $this->assertSame('', (string) new RealNum());
 
-        $this->assertSame('null', RealNum::new()->format('nullString'));
+        $this->assertSame('null', RealNum::new()->format('null="null"'));
 
         $this->assertSame('5', RealNum::new(5)->format());
         $this->assertSame('5', RealNum::new(5)->maxDecPl(2)->format());
@@ -910,12 +911,24 @@ class RealNumUnitTest extends TestCase
         $realNum = $realNum->maxDecPl(3);
         $this->assertSame(3, $realNum->maxDecPl);
 
-        // test rendering when maxDecPl is specified explicitly
-        $realNum = RealNum::new(5.123456789);
-        $this->assertSame('5.123456789', $realNum->format()); // (maxDecPl not specified)
-        $this->assertSame('5.123456789000000', $realNum->format(null, 15));
-        $this->assertSame('5.1235', $realNum->format(null, 4));
-        $this->assertSame('5', $realNum->format(null, 0));
+        // test rendering when decPl is specified explicitly
+        $realNum = RealNum::new(5.983456789);
+        $this->assertSame('5.98345678900000000000', $realNum->format('decPl=null trailZeros'));
+        $this->assertSame('5.983456789', $realNum->format('decPl=null')); // defaults to !trailZeros
+        $this->assertSame('5.983456789', $realNum->format('decPl=null !trailZeros'));
+
+        $this->assertSame('5.983456789000000', $realNum->format('decPl=15 trailZeros'));
+        $this->assertSame('5.983456789000000', $realNum->format('decPl=15')); // defaults to trailZeros
+        $this->assertSame('5.983456789', $realNum->format('decPl=15 !trailZeros'));
+
+        $this->assertSame('5.9835', $realNum->format('decPl=4 trailZeros')); // rounded
+        $this->assertSame('5.9835', $realNum->format('decPl=4 !trailZeros')); // rounded
+
+        $this->assertSame('6.0', $realNum->format('decPl=1 trailZeros')); // rounded
+        $this->assertSame('6', $realNum->format('decPl=1 !trailZeros')); // rounded
+
+        $this->assertSame('6', $realNum->format('decPl=0 trailZeros')); // rounded
+        $this->assertSame('6', $realNum->format('decPl=0 !trailZeros')); // rounded
     }
 
     /**

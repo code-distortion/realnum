@@ -48,6 +48,7 @@ class PercentUnitTest extends TestCase
             '+100%',
             '100%',
             '(100%)',
+            '12.34568%',
             '+10012.34500000000000000000%',
             'null',
             null,
@@ -67,6 +68,7 @@ class PercentUnitTest extends TestCase
             '+100 %',
             '100 %',
             '(100 %)',
+            '12,34568 %',
             '+10012,34500000000000000000 %',
             'null',
             null,
@@ -90,15 +92,16 @@ class PercentUnitTest extends TestCase
             $return[] = [$locale, 1, 20, 'showPlus', $outputValues[10]];
             $return[] = [$locale, 1, 20, 'accountingNeg', $outputValues[11]];
             $return[] = [$locale, -1, 20, 'accountingNeg', $outputValues[12]];
+            $return[] = [$locale, 0.123456789, 20, 'decPl=5', $outputValues[13]];
             $return[] = [
                 $locale,
                 100.1234500,
                 20,
-                'trailZeros -thousands showPlus accountingNeg nullString',
-                $outputValues[13]];
-            $return[] = [$locale, null, 20, 'nullString', $outputValues[14]];
-            $return[] = [$locale, null, 20, null, $outputValues[15]];
-            $return[] = [$locale, 0.12345, 20, 'breaking', $outputValues[16]];
+                'trailZeros -thousands showPlus accountingNeg null="null"',
+                $outputValues[14]];
+            $return[] = [$locale, null, 20, 'null="null"', $outputValues[15]];
+            $return[] = [$locale, null, 20, null, $outputValues[16]];
+            $return[] = [$locale, 0.12345, 20, 'breaking', $outputValues[17]];
         }
 
         return $return;

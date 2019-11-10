@@ -5,6 +5,7 @@ namespace CodeDistortion\RealNum;
 use CodeDistortion\Options\Options;
 use CodeDistortion\RealNum\Base;
 use NumberFormatter;
+use Throwable;
 
 /**
  * Arbitrary-precision floating-point numbers with localised rendering.
@@ -18,14 +19,14 @@ class RealNum extends Base
      * The original default format-settings - used when resetting the class-level defaults
      */
     const ORIG_FORMAT_SETTINGS = [
+        'null' => null,
+        'trailZeros' => false,
+        'decPl' => null,
         'thousands' => true,
         'showPlus' => false,
         'accountingNeg' => false,
-        'nullString' => false,
-        'nullZero' => false,
-        'trailZeros' => false,
-        'breaking' => false,
         'locale' => 'en',
+        'breaking' => false,
     ];
 
 
@@ -53,14 +54,14 @@ class RealNum extends Base
      * @var array
      */
     protected static $defaultFormatSettings = [
+        'null' => null,
+        'trailZeros' => false,
+        'decPl' => null,
         'thousands' => true,
         'showPlus' => false,
         'accountingNeg' => false,
-        'nullString' => false,
-        'nullZero' => false,
-        'trailZeros' => false,
-        'breaking' => false,
         'locale' => 'en',
+        'breaking' => false,
     ];
 
 
@@ -172,41 +173,59 @@ class RealNum extends Base
      * Format the current number in a readable way
      *
      * @param string|array|null $options The options to use when rendering the number.
-     * @param integer|null      $decPl   The number of decimal places to render to.
      * @return string
      */
-    public function format($options = null, int $decPl = null): ?string
+    public function format($options = null): ?string
     {
         $value = $this->getVal();
-        $options = Options::defaults($this->formatSettings)->resolve($options);
+        $parsedOptions = Options::parse($options);
+        $resolvedOptions = Options::defaults($this->formatSettings)->resolve($parsedOptions);
 
-        // render nulls as 0 if desired
-        if (((!is_string($value)) || (!mb_strlen($value)))
-        && ($options['nullZero'])) {
-            $value = '0';
+        // customise what happens when the value is null
+        if ((!is_string($value)) || (!mb_strlen($value))) {
+            try {
+                $value = static::extractBasicValue(
+                    $resolvedOptions['null'],
+                    $this->internalMaxDecPl(),
+                    false // don't pick up a 'null' string as null
+                );
+            } catch (Throwable $e) {
+                return $resolvedOptions['null']; // it could be a string like 'null'
+            }
         }
 
+        // render the value if it's a number
         if ((is_string($value)) && (mb_strlen($value))) {
 
-            $locale = $this->resolveLocaleCode($options['locale']); // allow locale to be specified by the caller
+            $locale = $this->resolveLocaleCode($resolvedOptions['locale']); // locale can be specified by the caller
+            $decPl = $resolvedOptions['decPl'];
             $maxDecPl = $this->internalMaxDecPl();
-            $type     = (static::$percentageMode ? NumberFormatter::PERCENT : NumberFormatter::DECIMAL);
+            $type = (static::$percentageMode ? NumberFormatter::PERCENT : NumberFormatter::DECIMAL);
 
-            // if no decPl was explicitly specified then...
-            if (is_null($decPl)) {
-
-                // show decimal zeros if desired
-                if ($options['trailZeros']) {
-                    $decPl = $this->maxDecPl;
-
-                // work out how many decimal places there actually are, because NumberFormatter seems to round
-                // to 3 when ::FRACTION_DIGITS isn't set and there are > 3 decimal places
-                } else {
-
-                    // when checking how many decimal places to use for percentages, turn 0.1 into 10 (ie. 0.1 = 10%)
-                    $checkAmount = (static::$percentageMode ? bcmul($value, '100', $maxDecPl) : $value);
-                    $decPl = static::howManyDecimalPlaces($checkAmount);
+            // if decPl was specified then force trailZeros to be on
+            if (!is_null($decPl)) {
+                // (as long as the caller didn't explicitly pass a trailZeros setting in the first place)
+                if (!array_key_exists('trailZeros', $parsedOptions)) {
+                    $resolvedOptions['trailZeros'] = true;
                 }
+            // otherwise include all the digits, and leave trailZeros alone
+            } else {
+                $decPl = $this->maxDecPl;
+            }
+
+            // remove trailing zeros if desired
+            // work out how many decimal places there actually are, because NumberFormatter seems to round
+            // to 3 when ::FRACTION_DIGITS isn't set and there are > 3 decimal places
+            if (!$resolvedOptions['trailZeros']) {
+
+                // when checking how many decimal places to use for percentages, turn 0.1 into 10 (ie. 0.1 = 10%)
+                $checkAmount = (static::$percentageMode ? bcmul($value, '100', $maxDecPl) : $value);
+
+                // make sure the value we're checking has been rounded to the desired number of decimal places
+                $checkAmount = (string) static::roundCalculation($checkAmount, $decPl, (int) $this->maxDecPl);
+
+                // see how many decimal places $checkAmount has
+                $decPl = min($decPl, static::howManyDecimalPlaces($checkAmount));
             }
 
 
@@ -215,7 +234,7 @@ class RealNum extends Base
             $numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decPl);
 
             // remove the thousands separator if desired
-            if (!$options['thousands']) {
+            if (!$resolvedOptions['thousands']) {
                 $numberFormatter->setAttribute(NumberFormatter::GROUPING_SEPARATOR_SYMBOL, null);
             }
 
@@ -230,9 +249,9 @@ class RealNum extends Base
                 $value,
                 $maxDecPl,
                 $locale,
-                (bool) $options['accountingNeg'],
-                (bool) $options['showPlus'],
-                (bool) $options['breaking'],
+                (bool) $resolvedOptions['accountingNeg'],
+                (bool) $resolvedOptions['showPlus'],
+                (bool) $resolvedOptions['breaking'],
                 $numberFormatter,
                 $callback
             );
@@ -240,7 +259,7 @@ class RealNum extends Base
             return $return;
         }
 
-        return ($options['nullString'] ? 'null' : null);
+        return null;
     }
 
     /**
