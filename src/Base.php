@@ -254,7 +254,9 @@ abstract class Base
      */
     public static function setDefaultFormatSettings($formatSettings = null): void
     {
-        static::$defaultFormatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($formatSettings);
+        static::$defaultFormatSettings = Options::defaults(static::$defaultFormatSettings)
+            ->resolve($formatSettings)
+            ->all();
     }
 
 
@@ -331,7 +333,7 @@ abstract class Base
 
         //     // set the format-settings-setting this object uses
         //     case 'formatSettings':
-        //         $this->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($value);
+        //         $this->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($value)->all();
         //         return;
 
         //     // set the localeResolver
@@ -456,7 +458,7 @@ abstract class Base
     public function formatSettings($formatSettings): self
     {
         $realNum = $this->immute();
-        $realNum->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($formatSettings);
+        $realNum->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($formatSettings)->all();
         return $realNum; // chainable - immutable
     }
 
