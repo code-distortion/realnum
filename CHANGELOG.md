@@ -6,9 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
-## [0.3.0] - 2019-11-11
+## [0.4.0] - 2019-11-12
 
 ### Changed
+- Updated CHANGELOG.md
+
+
+
+## [0.3.0] - 2019-11-11
+
+### Changed (breaking)
 - Updated the Base class to accept 'null' (string) as a valid value
 - Removed the "breaking" helper methods and attribute - it is now simply a format-setting
 - Changed "nullZero" and "nullString" options to "null=x"
@@ -22,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.2.0] - 2019-11-05
 
-### Changed
+### Changed (breaking)
 - Altered format() to use code-distortion/options based option values
 - Changed locale and noBreakWhitespace to be format-settings
 - Updated documentation
