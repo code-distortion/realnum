@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.4.0] - 2019-11-12
 
-### Changed
-- Updated CHANGELOG.md
+### Changed (breaking)
+- Updated the use of code-distortion/options which has changed ->resolve(x) to be chainable
 
 
 
