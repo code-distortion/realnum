@@ -15,10 +15,10 @@ class InvalidArgumentException extends BaseInvalidArgumentException
     /**
      * Return a new instance when a locale couldn't be resolved
      *
-     * @param string $localeIdentifier The locale being resolved.
+     * @param mixed $localeIdentifier The locale being resolved.
      * @return static
      */
-    public static function unresolveableLocale(string $localeIdentifier): self
+    public static function unresolveableLocale($localeIdentifier): self
     {
         return new static('Locale "'.$localeIdentifier.'" could not be resolved');
     }
