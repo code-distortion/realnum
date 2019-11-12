@@ -318,38 +318,6 @@ abstract class Base
      */
     public function __set(string $name, $value)
     {
-        // this object may be immutable so don't allow it to be updated like this
-        // switch ($name) {
-
-        //     // set the locale this object uses
-        //     case 'locale':
-        //         $this->formatSettings['locale'] = static::resolveLocaleCode($value);
-        //         return;
-
-        //     // set the immutable-setting this object uses
-        //     case 'immutable':
-        //         $this->immutable = (!is_null($value) ? (bool) $value : null);
-        //         return;
-
-        //     // set the format-settings-setting this object uses
-        //     case 'formatSettings':
-        //         $this->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($value)->all();
-        //         return;
-
-        //     // set the localeResolver
-        //     case 'localeResolver':
-        //         static::$localeResolver = $value;
-        //         return;
-
-
-
-        //     // set the value this object represents
-        //     case 'val':
-        //     case 'str':
-        //         $this->setValue($value);
-        //         return;
-        // }
-
         throw UndefinedPropertyException::new($name);
     }
 

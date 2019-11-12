@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
+## [0.4.1] - 2019-11-13
+
+### Changed
+- Added custom exceptions
+
+
+
 ## [0.4.0] - 2019-11-12
 
 ### Changed (breaking)
@@ -20,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Removed the "breaking" helper methods and attribute - it is now simply a format-setting
 - Changed "nullZero" and "nullString" options to "null=x"
 - Changed decPl to be a "decPl=x" format-setting
+
+### Changed
 - Updated documentation
 
 ### Fixed
@@ -32,6 +41,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed (breaking)
 - Altered format() to use code-distortion/options based option values
 - Changed locale and noBreakWhitespace to be format-settings
+
+### Changed
 - Updated documentation
 
 
