@@ -3,8 +3,8 @@
 namespace CodeDistortion\RealNum;
 
 use CodeDistortion\Options\Options;
-use ErrorException;
-use InvalidArgumentException;
+use CodeDistortion\RealNum\Exceptions\InvalidArgumentException;
+use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use NumberFormatter;
 
 /**
@@ -270,7 +270,7 @@ abstract class Base
      *
      * @param string $name The field to get.
      * @return mixed
-     * @throws \ErrorException Thrown when accessing an invalid field.
+     * @throws UndefinedPropertyException Thrown when accessing an invalid field.
      */
     public function __get(string $name)
     {
@@ -305,7 +305,7 @@ abstract class Base
             case 'cast':
                 return $this->getValCast();
         }
-        throw new ErrorException('Undefined property: '.static::class.'::$'.$name);
+        throw UndefinedPropertyException::new($name);
     }
 
     /**
@@ -314,7 +314,7 @@ abstract class Base
      * @param string $name  The name of the value to set.
      * @param mixed  $value The value to store.
      * @return void
-     * @throws \ErrorException Thrown when accessing an invalid field.
+     * @throws UndefinedPropertyException Thrown when accessing an invalid field.
      */
     public function __set(string $name, $value)
     {
@@ -350,7 +350,7 @@ abstract class Base
         //         return;
         // }
 
-        throw new ErrorException('Undefined property: '.static::class.'::$'.$name);
+        throw UndefinedPropertyException::new($name);
     }
 
     /**
@@ -414,7 +414,7 @@ abstract class Base
             return $localeIdentifier;
         }
 
-        throw new InvalidArgumentException('Locale code "'.$localeIdentifier.'" could not be resolved');
+        throw InvalidArgumentException::unresolveableLocale($localeIdentifier);
     }
 
 
@@ -1007,7 +1007,7 @@ abstract class Base
             }
             return true;
         }
-        throw new InvalidArgumentException('No comparison values were passed');
+        throw InvalidArgumentException::noComparisonValues();
     }
 
     /**
@@ -1282,7 +1282,7 @@ abstract class Base
 
         // otherwise fail
         if ($throwException) {
-            throw new InvalidArgumentException('The given value \''.$value.'\' is not numeric');
+            throw InvalidArgumentException::notNumeric($value);
         }
 
         return null;
@@ -1344,29 +1344,28 @@ abstract class Base
     protected function ensureCompatibleValue($value, bool $throwException = true): bool
     {
         // objects
-        $exceptionMsg = null;
+        $exception = null;
         if (is_object($value)) {
             // this object is compatible with other objects of the same type
             if (!$value instanceof static) {
-                $exceptionMsg = 'Object of type '.get_class($value).' is not compatible '
-                                .'for operations with '.static::class;
+                $exception = InvalidArgumentException::incompatibleObject(get_class($value));
             }
         // strings
         } elseif (is_string($value)) {
             if ((mb_strtolower($value) != 'null') && (!is_numeric($value))) {
-                $exceptionMsg = 'String value "'.$value.'" is not numeric';
+                $exception = InvalidArgumentException::notNumeric($value);
             }
         // int / float / null
         } elseif ((!is_int($value)) && (!is_float($value)) && (!is_null($value))) {
-            $exceptionMsg = 'The given value "'.$value.'" is not valid';
+            $exception = InvalidArgumentException::notNumeric($value);
         }
 
         // check if an error was found
-        if (is_string($exceptionMsg)) {
+        if (!is_null($exception)) {
 
             // throw an exception if necessary
             if ($throwException) {
-                throw new InvalidArgumentException($exceptionMsg);
+                throw $exception;
             }
             return false;
         }

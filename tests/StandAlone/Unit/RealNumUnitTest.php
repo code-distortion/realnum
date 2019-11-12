@@ -2,13 +2,11 @@
 
 namespace CodeDistortion\RealNum\Tests\StandAlone\Unit;
 
+use CodeDistortion\RealNum\Exceptions\InvalidArgumentException;
+use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use CodeDistortion\RealNum\RealNum;
 use CodeDistortion\RealNum\Tests\StandAlone\TestCase;
-use ErrorException;
-use InvalidArgumentException;
-//use Mockery\Mockery;
 use PHPUnit\Framework\Error\Warning;
-use RuntimeException;
 use stdClass;
 
 /**
@@ -1010,12 +1008,12 @@ class RealNumUnitTest extends TestCase
     public function test_realnum_exceptions(): void
     {
         // (pseudo-)property abc doesn't exist to GET
-        $this->assertThrows(ErrorException::class, function () {
+        $this->assertThrows(UndefinedPropertyException::class, function () {
             RealNum::new()->abc; // phpstan false positive
         });
 
         // (pseudo-)property abc doesn't exist to SET
-        $this->assertThrows(ErrorException::class, function () {
+        $this->assertThrows(UndefinedPropertyException::class, function () {
             $realNum = RealNum::new();
             $realNum->abc = true; // phpstan false positive
         });
