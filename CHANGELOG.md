@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
+## [0.5.1] - 2019-12-04
+
+### Changed
+- Added a parent exception
+- Tweaked the individual exceptions.
+
+
+
 ## [0.4.1] - 2019-11-13
 
 ### Changed
