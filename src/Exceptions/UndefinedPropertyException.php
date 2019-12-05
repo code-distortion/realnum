@@ -2,16 +2,11 @@
 
 namespace CodeDistortion\RealNum\Exceptions;
 
-use CodeDistortion\RealNum\Exceptions\ExceptionTrait;
-use Exception;
-
 /**
  * Exception for when undefined properties are accessed
  */
-class UndefinedPropertyException extends Exception
+class UndefinedPropertyException extends RealNumException
 {
-    use ExceptionTrait;
-
     /**
      * Return a new instance when a undefined property was accessed
      *
@@ -20,6 +15,6 @@ class UndefinedPropertyException extends Exception
      */
     public static function new(string $name): self
     {
-        return new static('Undefined property: '.static::getCallingClass().'::$'.$name);
+        return new static('Undefined property: "'.$name.'"');
     }
 }

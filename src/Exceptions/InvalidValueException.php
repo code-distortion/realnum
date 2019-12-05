@@ -2,26 +2,12 @@
 
 namespace CodeDistortion\RealNum\Exceptions;
 
-use CodeDistortion\RealNum\Exceptions\ExceptionTrait;
-use InvalidArgumentException as BaseInvalidArgumentException;
-
 /**
  * Exception for when invalid arguments are passed
  */
-class InvalidArgumentException extends BaseInvalidArgumentException
+class InvalidValueException extends RealNumException
 {
     use ExceptionTrait;
-
-    /**
-     * Return a new instance when a locale couldn't be resolved
-     *
-     * @param mixed $localeIdentifier The locale being resolved.
-     * @return static
-     */
-    public static function unresolveableLocale($localeIdentifier): self
-    {
-        return new static('Locale "'.$localeIdentifier.'" could not be resolved');
-    }
 
     /**
      * Return a new instance when no comparison values were passed

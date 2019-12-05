@@ -3,12 +3,15 @@
 namespace CodeDistortion\RealNum;
 
 use CodeDistortion\Options\Options;
-use CodeDistortion\RealNum\Base;
+use CodeDistortion\RealNum\Exceptions\InvalidValueException;
+use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
+use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use NumberFormatter;
 use Throwable;
 
 /**
  * Arbitrary-precision floating-point numbers with localised rendering.
+ *
  * Represents floating-point numbers, performs calculations & comparisons on them, and renders them.
  *
  * The Percent class extends from this.
@@ -88,16 +91,15 @@ class RealNum extends Base
     protected static $percentageMode = false;
 
 
-
-
-
     /**
      * Build a new RealNum object
      *
      * @param integer|float|string|self|null $value          The initial value to store.
      * @param boolean                        $throwException Should an exception be thrown if the $value is invalid?
      *                                                       (the value will be set to null upon error otherwise).
+     *
      * @return static
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     public static function new($value = null, bool $throwException = true)
     {
@@ -130,12 +132,13 @@ class RealNum extends Base
     }
 
 
-
     /**
      * Get various values stored in this object
      *
      * @param string $name The field to get.
      * @return mixed
+     * @throws UndefinedPropertyException Thrown when accessing an invalid field.
+     * @throws InvalidLocaleException     Thrown when the locale cannot be resolved.
      */
     public function __get(string $name)
     {
@@ -144,10 +147,11 @@ class RealNum extends Base
             // return the maximum number of decimal places available to use
             case 'maxDecPl':
                 return $this->maxDecPl;
-        }
 
-        // see if the parent can handle this
-        return parent::__get($name);
+            // see if the parent can handle this
+            default:
+                return parent::__get($name);
+        }
     }
 
 
@@ -166,14 +170,12 @@ class RealNum extends Base
     }
 
 
-
-
-
     /**
      * Format the current number in a readable way
      *
      * @param string|array|null $options The options to use when rendering the number.
      * @return string
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     public function format($options = null): ?string
     {

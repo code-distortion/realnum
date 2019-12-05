@@ -2,13 +2,14 @@
 
 namespace CodeDistortion\RealNum\Laravel;
 
+use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Percent;
 use CodeDistortion\RealNum\RealNum;
+use CodeDistortion\RealNum\Exceptions\InvalidValueException;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Events\EventDispatcher;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
-use Throwable;
 
 /**
  * RealNum & Percent ServiceProvider for Laravel
@@ -29,6 +30,7 @@ class ServiceProvider extends BaseServiceProvider
      * Service-provider boot method
      *
      * @return void
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     public function boot(): void
     {
@@ -51,7 +53,9 @@ class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom($configPath, 'realnum');
 
         // allow the default config to be published
-        if ($this->app->runningInConsole()) {
+        if ((!$this->app->environment('testing'))
+        && ($this->app->runningInConsole())) {
+
             $this->publishes(
                 [$configPath => config_path('realnum.php'),],
                 'config'
@@ -63,6 +67,7 @@ class ServiceProvider extends BaseServiceProvider
      * Set the RealNum & Percent default values
      *
      * @return void
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     protected function setDefaults(): void
     {
@@ -123,6 +128,7 @@ class ServiceProvider extends BaseServiceProvider
      * Update the RealNum & Percent locale
      *
      * @return void
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     protected function updateLocale(): void
     {

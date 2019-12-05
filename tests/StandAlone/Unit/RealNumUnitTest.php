@@ -2,7 +2,8 @@
 
 namespace CodeDistortion\RealNum\Tests\StandAlone\Unit;
 
-use CodeDistortion\RealNum\Exceptions\InvalidArgumentException;
+use CodeDistortion\RealNum\Exceptions\InvalidValueException;
+use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use CodeDistortion\RealNum\RealNum;
 use CodeDistortion\RealNum\Tests\StandAlone\TestCase;
@@ -283,16 +284,12 @@ class RealNumUnitTest extends TestCase
     }
 
 
-
-
-
-
-
     /**
      * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered
      *
      * @test
      * @return void
+     * @throws \CodeDistortion\RealNum\Exceptions\InvalidValueException
      */
     public function test_realnum_default_settings(): void
     {
@@ -984,17 +981,17 @@ class RealNumUnitTest extends TestCase
         $this->assertSame(5, RealNum::new($cur2)->cast);
 
         // initial value is invalid - boolean
-        $this->assertThrows(InvalidArgumentException::class, function () {
+        $this->assertThrows(InvalidValueException::class, function () {
             RealNum::new(true); // phpstan false positive
         });
 
         // initial value is invalid - non-numeric string
-        $this->assertThrows(InvalidArgumentException::class, function () {
+        $this->assertThrows(InvalidValueException::class, function () {
             RealNum::new('abc');
         });
 
         // initial value is invalid - object
-        $this->assertThrows(InvalidArgumentException::class, function () {
+        $this->assertThrows(InvalidValueException::class, function () {
             RealNum::new(new stdClass()); // phpstan false positive
         });
     }
@@ -1019,7 +1016,7 @@ class RealNumUnitTest extends TestCase
         });
 
         // invalid value to add
-        $this->assertThrows(InvalidArgumentException::class, function () {
+        $this->assertThrows(InvalidValueException::class, function () {
             RealNum::new(1)->add(true); // phpstan false positive
         });
 
@@ -1029,12 +1026,12 @@ class RealNumUnitTest extends TestCase
         });
 
         // unresolvable locale
-        $this->assertThrows(InvalidArgumentException::class, function () {
+        $this->assertThrows(InvalidLocaleException::class, function () {
             RealNum::new()->locale(1);
         });
 
         // invalid value to compare
-        $this->assertThrows(InvalidArgumentException::class, function () {
+        $this->assertThrows(InvalidValueException::class, function () {
             $this->assertFalse(RealNum::new(1)->lt()); // no comparison value passed
         });
     }

@@ -17,8 +17,6 @@ class LaravelIntegrationTest extends TestCase
     /**
      * Test that the service-provider is registered in Laravel and acts correctly
      *
-     * @todo get Laravel (orchestra-testbench) to pick up the service provider, and then perform the below test to
-     *       check that the change-locale event is picked up.
      * @test
      * @return void
      */

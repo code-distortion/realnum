@@ -3,7 +3,8 @@
 namespace CodeDistortion\RealNum;
 
 use CodeDistortion\Options\Options;
-use CodeDistortion\RealNum\Exceptions\InvalidArgumentException;
+use CodeDistortion\RealNum\Exceptions\InvalidValueException;
+use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use NumberFormatter;
 
@@ -115,15 +116,13 @@ abstract class Base
     protected static $localeResolver = null;
 
 
-
-
-
     /**
      * Constructor
      *
      * @param integer|float|string|self|null $value          The initial value to store.
      * @param boolean                        $throwException Should an exception be thrown if the $value is invalid?
      *                                                       (the value will be set to null upon error otherwise).
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     public function __construct($value = null, bool $throwException = true)
     {
@@ -209,6 +208,7 @@ abstract class Base
      *
      * @param integer|string $locale The locale to set.
      * @return void
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     public static function setDefaultLocale($locale): void
     {
@@ -260,17 +260,13 @@ abstract class Base
     }
 
 
-
-
-
-
-
     /**
      * Get various values stored in this object
      *
      * @param string $name The field to get.
      * @return mixed
      * @throws UndefinedPropertyException Thrown when accessing an invalid field.
+     * @throws InvalidLocaleException     Thrown when the locale cannot be resolved.
      */
     public function __get(string $name)
     {
@@ -304,8 +300,10 @@ abstract class Base
             // NOTE: this will be lossy when returning float values
             case 'cast':
                 return $this->getValCast();
+
+            default:
+                throw UndefinedPropertyException::new($name);
         }
-        throw UndefinedPropertyException::new($name);
     }
 
     /**
@@ -351,7 +349,7 @@ abstract class Base
     /**
      * Return the localeResolver
      *
-     * @return ?callable
+     * @return callable|null
      */
     public static function getLocaleResolver(): ?callable
     {
@@ -363,7 +361,7 @@ abstract class Base
      *
      * @param integer|string|null $localeIdentifier Identifier of the locale to resolve.
      * @return string
-     * @throws InvalidArgumentException Thrown when the $localeIdentifier can not be resolved.
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     protected static function resolveLocaleCode($localeIdentifier): string
     {
@@ -382,7 +380,7 @@ abstract class Base
             return $localeIdentifier;
         }
 
-        throw InvalidArgumentException::unresolveableLocale($localeIdentifier);
+        throw InvalidLocaleException::unresolvableLocale($localeIdentifier);
     }
 
 
@@ -396,6 +394,7 @@ abstract class Base
      *
      * @param integer|string $locale The new locale to use.
      * @return static
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     public function locale($locale): self
     {
@@ -433,9 +432,10 @@ abstract class Base
     /**
      * Set the value this object represents
      *
-     * @param  integer|float|string|self|null $value          The value to set.
-     * @param  boolean                        $throwException Throw an exception if the given value isn't valid?.
+     * @param integer|float|string|self|null $value          The value to set.
+     * @param boolean                        $throwException Throw an exception if the given value isn't valid?.
      * @return static
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     public function val($value = null, bool $throwException = true): self
     {
@@ -443,11 +443,12 @@ abstract class Base
     }
 
     /**
-     * Set the value this object represents
+     * Set the value this object represents - alias for val(..)
      *
      * @param integer|float|string|self|null $value          The value to set.
      * @param boolean                        $throwException Throw an exception if the given value isn't valid?.
      * @return static
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     public function cast($value = null, bool $throwException = true): self
     {
@@ -461,11 +462,11 @@ abstract class Base
 
 
     /**
-    * Perform a round calculation on the value contained in this object.
-    *
-    * @param integer $decPl The decimal places to round to.
-    * @return static
-    */
+     * Perform a round calculation on the value contained in this object.
+     *
+     * @param integer $decPl The decimal places to round to.
+     * @return static
+     */
     public function round(int $decPl = 0): self
     {
         $realNum = $this->immute();
@@ -478,10 +479,10 @@ abstract class Base
     }
 
     /**
-    * Perform a floor calculation on the value contained in this object
-    *
-    * @return static
-    */
+     * Perform a floor calculation on the value contained in this object
+     *
+     * @return static
+     */
     public function floor(): self
     {
         $realNum = $this->immute();
@@ -494,10 +495,10 @@ abstract class Base
     }
 
     /**
-    * Perform a ceil calculation on the value contained in this object
-    *
-    * @return static
-    */
+     * Perform a ceil calculation on the value contained in this object
+     *
+     * @return static
+     */
     public function ceil(): self
     {
         $realNum = $this->immute();
@@ -510,11 +511,12 @@ abstract class Base
     }
 
     /**
-    * Perform an add calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to add.
-    * @return static
-    */
+     * Perform an add calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to add.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     public function add(...$args): self
     {
         $this->ensureCompatibleArgs($args);
@@ -524,21 +526,23 @@ abstract class Base
     }
 
     /**
-    * Perform a sum calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to add.
-    * @return static
-    */
+     * Perform a sum calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to add.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     // public function sum(...$args): self
     // {
     // }
 
     /**
-    * Perform a div calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to divide.
-    * @return static
-    */
+     * Perform a div calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to divide.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     public function div(...$args): self
     {
         $this->ensureCompatibleArgs($args);
@@ -548,20 +552,22 @@ abstract class Base
     }
 
     /**
-    * Perform a mod calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to perform modulo with.
-    * @return static
-    */
+     * Perform a mod calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to perform modulo with.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     // public function mod(...$args): self
     // {
     // }
 
     /**
-    * Perform a mul calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to multiply.
-    * @return static
+     * Perform a mul calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to multiply.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
     */
     public function mul(...$args): self
     {
@@ -572,21 +578,22 @@ abstract class Base
     }
 
     /**
-    * Perform a pow calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to pow.
-    * @return static
-    */
+     * Perform a pow calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to pow.
+     * @return static
+     */
     // public function pow(...$args): self
     // {
     // }
 
     /**
-    * Perform a sub calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to subtract.
-    * @return static
-    */
+     * Perform a sub calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to subtract.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     public function sub(...$args): self
     {
         $this->ensureCompatibleArgs($args);
@@ -596,32 +603,35 @@ abstract class Base
     }
 
     /**
-    * Perform an avg calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null ...$args The values to average.
-    * @return static
-    */
+     * Perform an avg calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null ...$args The values to average.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     // public function avg(...$args): self
     // {
     // }
 
     /**
-    * Perform an increment calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null $value The amount to add.
-    * @return static
-    */
+     * Perform an increment calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null $value The amount to add.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     public function inc($value = 1): self
     {
         return $this->add($value);
     }
 
     /**
-    * Perform a decrement calculation on the value contained in this object
-    *
-    * @param self|integer|float|string|null $value The values to subtract.
-    * @return static
-    */
+     * Perform a decrement calculation on the value contained in this object
+     *
+     * @param self|integer|float|string|null $value The values to subtract.
+     * @return static
+     * @throws InvalidValueException Thrown when one of the given $args is invalid.
+     */
     public function dec($value = 1): self
     {
         return $this->sub($value);
@@ -635,9 +645,10 @@ abstract class Base
 
     /**
      * Check if the current value is < the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function lt(...$comparisonValues): bool
     {
@@ -647,9 +658,10 @@ abstract class Base
 
     /**
      * Check if the current value is < the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function lessThan(...$comparisonValues): bool
     {
@@ -659,9 +671,10 @@ abstract class Base
 
     /**
      * Check if the current value is <= the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function lte(...$comparisonValues): bool
     {
@@ -671,9 +684,10 @@ abstract class Base
 
     /**
      * Check if the current value is <= the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function lessThanOrEqualTo(...$comparisonValues): bool
     {
@@ -683,9 +697,10 @@ abstract class Base
 
     /**
      * Check if the current value is = the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function eq(...$comparisonValues): bool
     {
@@ -695,9 +710,10 @@ abstract class Base
 
     /**
      * Check if the current value is = the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function equalTo(...$comparisonValues): bool
     {
@@ -707,9 +723,10 @@ abstract class Base
 
     /**
      * Check if the current value is >= the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function gte(...$comparisonValues): bool
     {
@@ -719,9 +736,10 @@ abstract class Base
 
     /**
      * Check if the current value is >= the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function greaterThanOrEqualTo(...$comparisonValues): bool
     {
@@ -731,9 +749,10 @@ abstract class Base
 
     /**
      * Check if the current value is > the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function gt(...$comparisonValues): bool
     {
@@ -743,9 +762,10 @@ abstract class Base
 
     /**
      * Check if the current value is > the given values
-    *
-    * @param mixed ...$comparisonValues The values to compare.
-    * @return boolean
+     *
+     * @param mixed ...$comparisonValues The values to compare.
+     * @return boolean
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     public function greaterThan(...$comparisonValues): bool
     {
@@ -755,12 +775,13 @@ abstract class Base
 
     /**
      * Check if the current value is between the given values
-    *
-    * @param integer|float|string|self|null $start          The start bound.
-    * @param integer|float|string|self|null $end            The end bound.
-    * @param boolean                        $inclusive      Whether the bounds are inclusive or not.
-    * @param boolean                        $throwException Should an exception be thrown if $start/$end are invalid?.
-    * @return boolean
+     *
+     * @param integer|float|string|self|null $start          The start bound.
+     * @param integer|float|string|self|null $end            The end bound.
+     * @param boolean                        $inclusive      Whether the bounds are inclusive or not.
+     * @param boolean                        $throwException Should an exception be thrown if $start/$end are invalid?.
+     * @return boolean
+     * @throws InvalidValueException Thrown when $start or $end is invalid.
      */
     public function between($start, $end, bool $inclusive = true, bool $throwException = true): bool
     {
@@ -854,8 +875,9 @@ abstract class Base
     }
 
     /**
-    * Perform a ceil operation on the given $value
-    * This is to make up for the fact that a bcmath bcceil function doesn't exist
+     * Perform a ceil operation on the given $value
+     *
+     * This is to make up for the fact that a bcmath bcceil function doesn't exist
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
      * @param string|null $value    The number ceil.
      * @param integer     $decPl    The number of decimal places to 'ceil' to.
@@ -897,6 +919,7 @@ abstract class Base
      * @param string $bcFunction The bcmath function to run.
      * @param array  $args       The values to preform the calculations with.
      * @return static
+     * @throws InvalidValueException Thrown when one of the given values is invalid.
      */
     private static function runBcFunction(
         Base $realNum,
@@ -941,14 +964,14 @@ abstract class Base
 
     /**
      * Compare the given $comparisonValues to the $value, and see if all of them pass the comparison rule
-     * (govened by $allowedComparisons)
+     * (governed by $allowedComparisons)
      *
      * @param string|null $value              The source value to compare.
      * @param array       $comparisonValues   The values to compare to $value.
      * @param array       $allowedComparisons An array representing lt/eq/gt [-1, 0, 1].
      * @param integer     $maxDecPl           The max bcmath decimal-places to use.
      * @return boolean
-     * @throws InvalidArgumentException Thrown when no comparison values were passed.
+     * @throws InvalidValueException Thrown when no comparison values were passed.
      */
     private static function compare(
         $value,
@@ -975,7 +998,7 @@ abstract class Base
             }
             return true;
         }
-        throw InvalidArgumentException::noComparisonValues();
+        throw InvalidValueException::noComparisonValues();
     }
 
     /**
@@ -984,7 +1007,6 @@ abstract class Base
      * if $start or $end is null, they aren't used,
      * if both are null, no comparison is made (true will be returned)
      * if $value is null, false will be returned
-     *
      * @param string|null                    $value          The source value to compare.
      * @param integer|float|string|self|null $start          The start bound.
      * @param integer|float|string|self|null $end            The end bound.
@@ -992,6 +1014,7 @@ abstract class Base
      * @param integer                        $decPl          The bcmath decimal-places to use.
      * @param boolean                        $throwException Should an exception be thrown if $start/$end are invalid?.
      * @return boolean
+     * @throws InvalidValueException Thrown when the $start or $end value is invalid.
      */
     private static function betweenCalculation(
         $value,
@@ -1046,7 +1069,7 @@ abstract class Base
     }
 
     /**
-     * Internal method used by render(..) to perform part of the rendinging
+     * Internal method used by render(..) to perform part of the rendering
      *
      * @param string          $value              The value to render.
      * @param integer         $maxDecPl           The decimal places to use when checking the value.
@@ -1178,6 +1201,7 @@ abstract class Base
      * @param integer|float|string|self|null $value          The value to store.
      * @param boolean                        $throwException Throw an exception if the given value isn't valid?.
      * @return static
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     protected function setValue($value, bool $throwException = true): self
     {
@@ -1208,7 +1232,6 @@ abstract class Base
     }
 
 
-
     /**
      * Check the given value to see that it can be worked with, and return the value (int, float, string, null) to be
      * used
@@ -1219,7 +1242,7 @@ abstract class Base
      * @param boolean                        $allowNullString When true a 'null' string will be picked up as null.
      * @param boolean                        $throwException  Should an exception be thrown if the $value is invalid?.
      * @return string|null
-     * @throws \InvalidArgumentException Thrown when $value is invalid.
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     protected static function extractBasicValue(
         $value,
@@ -1250,7 +1273,7 @@ abstract class Base
 
         // otherwise fail
         if ($throwException) {
-            throw InvalidArgumentException::notNumeric($value);
+            throw InvalidValueException::notNumeric($value);
         }
 
         return null;
@@ -1290,6 +1313,7 @@ abstract class Base
      * @param array   $args           The arguments to check against this.
      * @param boolean $throwException Should an exception be raised if the given value isn't valid?.
      * @return boolean
+     * @throws InvalidValueException Thrown when one of the given $args is invalid (and $throwException is true).
      */
     protected function ensureCompatibleArgs(array $args, bool $throwException = true): bool
     {
@@ -1307,7 +1331,7 @@ abstract class Base
      * @param mixed   $value          The value to check against the value stored in this object.
      * @param boolean $throwException Should an exception be raised if the given value isn't valid?.
      * @return boolean
-     * @throws InvalidArgumentException Thrown when the given value is invalid (and $throwException is true).
+     * @throws InvalidValueException Thrown when the given value is invalid (and $throwException is true).
      */
     protected function ensureCompatibleValue($value, bool $throwException = true): bool
     {
@@ -1316,16 +1340,16 @@ abstract class Base
         if (is_object($value)) {
             // this object is compatible with other objects of the same type
             if (!$value instanceof static) {
-                $exception = InvalidArgumentException::incompatibleObject(get_class($value));
+                $exception = InvalidValueException::incompatibleObject(get_class($value));
             }
         // strings
         } elseif (is_string($value)) {
             if ((mb_strtolower($value) != 'null') && (!is_numeric($value))) {
-                $exception = InvalidArgumentException::notNumeric($value);
+                $exception = InvalidValueException::notNumeric($value);
             }
         // int / float / null
         } elseif ((!is_int($value)) && (!is_float($value)) && (!is_null($value))) {
-            $exception = InvalidArgumentException::notNumeric($value);
+            $exception = InvalidValueException::notNumeric($value);
         }
 
         // check if an error was found
@@ -1341,12 +1365,12 @@ abstract class Base
     }
 
 
-
     /**
      * Use the given locale, but use the current one if needed
      *
      * @param integer|string|null $localeIdentifier The locale to force (otherwise the current one is used).
      * @return string
+     * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
      */
     protected function effectiveLocale($localeIdentifier = null): string
     {
