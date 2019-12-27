@@ -5,7 +5,6 @@ namespace CodeDistortion\RealNum\Laravel;
 use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Percent;
 use CodeDistortion\RealNum\RealNum;
-use CodeDistortion\RealNum\Exceptions\InvalidValueException;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Events\EventDispatcher;
@@ -50,14 +49,14 @@ class ServiceProvider extends BaseServiceProvider
     {
         // initialise the config
         $configPath = __DIR__.'/../../config/config.php';
-        $this->mergeConfigFrom($configPath, 'realnum');
+        $this->mergeConfigFrom($configPath, 'code-distortion.realnum');
 
         // allow the default config to be published
         if ((!$this->app->environment('testing'))
         && ($this->app->runningInConsole())) {
 
             $this->publishes(
-                [$configPath => config_path('realnum.php'),],
+                [$configPath => config_path('code-distortion.realnum.php'),],
                 'config'
             );
         }
@@ -73,15 +72,15 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->updateLocale();
 
-        $maxDecPl = config('realnum.max_dec_pl');
+        $maxDecPl = config('code-distortion.realnum.max_dec_pl');
         RealNum::setDefaultMaxDecPl($maxDecPl);
         Percent::setDefaultMaxDecPl($maxDecPl);
 
-        $immutable = config('realnum.immutable');
+        $immutable = config('code-distortion.realnum.immutable');
         RealNum::setDefaultImmutability($immutable);
         Percent::setDefaultImmutability($immutable);
 
-        $formatSettings = config('realnum.format_settings');
+        $formatSettings = config('code-distortion.realnum.format_settings');
         RealNum::setDefaultFormatSettings($formatSettings);
         Percent::setDefaultFormatSettings($formatSettings);
     }
