@@ -3,7 +3,7 @@
 namespace CodeDistortion\RealNum\Exceptions;
 
 /**
- * Exception for when invalid arguments are passed
+ * Exception for when an invalid locale is found
  */
 class InvalidLocaleException extends RealNumException
 {

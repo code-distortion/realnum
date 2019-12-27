@@ -25,7 +25,7 @@ If you would like to work with *currency* values, please consider the [code-dist
 
 ## Installation
 
-You can install the package via composer:
+Install the package via composer:
 
 ```bash
 composer require code-distortion/realnum
