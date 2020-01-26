@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
+## [0.6.2] - 2020-01-27
+
+### Changed
+- Updated non-Testbench tests so they could use the non-namespaced phpunit TestCase from old versions of phpunit (because old versions of Testbench require old versions of phpunit). This allowed testing back to Laravel 5.2.
+- Removed Testbench from tests that are really only needed to test the version of PHP.
+
+
+
 ## [0.6.1] - 2020-01-26
 
 ### Added
