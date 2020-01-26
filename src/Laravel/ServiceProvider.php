@@ -72,17 +72,20 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->updateLocale();
 
-        $maxDecPl = config('code-distortion.realnum.max_dec_pl');
-        RealNum::setDefaultMaxDecPl($maxDecPl);
-        Percent::setDefaultMaxDecPl($maxDecPl);
+        if (config('code-distortion.realnum')) {
 
-        $immutable = config('code-distortion.realnum.immutable');
-        RealNum::setDefaultImmutability($immutable);
-        Percent::setDefaultImmutability($immutable);
+            $maxDecPl = config('code-distortion.realnum.max_dec_pl');
+            RealNum::setDefaultMaxDecPl($maxDecPl);
+            Percent::setDefaultMaxDecPl($maxDecPl);
 
-        $formatSettings = config('code-distortion.realnum.format_settings');
-        RealNum::setDefaultFormatSettings($formatSettings);
-        Percent::setDefaultFormatSettings($formatSettings);
+            $immutable = config('code-distortion.realnum.immutable');
+            RealNum::setDefaultImmutability($immutable);
+            Percent::setDefaultImmutability($immutable);
+
+            $formatSettings = config('code-distortion.realnum.format_settings');
+            RealNum::setDefaultFormatSettings($formatSettings);
+            Percent::setDefaultFormatSettings($formatSettings);
+        }
     }
 
     /**
