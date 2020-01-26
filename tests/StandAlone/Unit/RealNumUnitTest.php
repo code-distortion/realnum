@@ -1040,7 +1040,7 @@ class RealNumUnitTest extends TestCase
 
             // invalid value to compare
             $this->assertThrows(InvalidValueException::class, function () {
-                $this->assertFalse(RealNum::new(1)->lt()); // no comparison value passed
+                RealNum::new(1)->lt(); // no comparison value passed
             });
         }
     }
