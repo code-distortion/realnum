@@ -19,7 +19,7 @@ use Throwable;
 class RealNum extends Base
 {
     /**
-     * The original default format-settings - used when resetting the class-level defaults
+     * The original default format-settings - used when resetting the class-level defaults.
      */
     const ORIG_FORMAT_SETTINGS = [
         'null' => null,
@@ -35,9 +35,10 @@ class RealNum extends Base
 
 
     /**
-     * The default maximum number of decimal places available to use (at the class-level)
+     * The default maximum number of decimal places available to use (at the class-level).
      *
      * Objects will pick this value up when instantiated.
+     *
      * @var integer
      */
     protected static $defaultMaxDecPl = 20;
@@ -46,6 +47,7 @@ class RealNum extends Base
      * The default immutable-setting (at the class-level).
      *
      * Objects will pick this value up when instantiated.
+     *
      * @var boolean
      */
     protected static $defaultImmutable = true;
@@ -54,6 +56,7 @@ class RealNum extends Base
      * The default settings to use when formatting the number (at the class-level).
      *
      * Objects will pick this value up when instantiated.
+     *
      * @var array
      */
     protected static $defaultFormatSettings = [
@@ -72,27 +75,29 @@ class RealNum extends Base
 
 
     /**
-     * Callback used to resolve localeIdentifiers
+     * Callback used to resolve localeIdentifiers.
      *
      * It may for example understand database ids, and map them back to their 'en-AU' equivalent.
      * When this hasn't been set, the locales are assumed to be strings like 'en-AU' and treated as is.
-     * @var ?callable
+     *
+     * @var callable|null
      */
     protected static $localeResolver = null;
 
     /**
      * An internal setting - This will add an extra 2 decPl internally when rounding, and will cause it to be rendered
-     * as a percentage value
+     * as a percentage value.
      *
      * This is because percent values are actually between 0 & 1, so a value of 0.12345 should be output as  12.345%.
      * This value is to be overridden by the child Percent class.
+     *
      * @var boolean
      */
     protected static $percentageMode = false;
 
 
     /**
-     * Build a new RealNum object
+     * Build a new RealNum object.
      *
      * @param integer|float|string|self|null $value          The initial value to store.
      * @param boolean                        $throwException Should an exception be thrown if the $value is invalid?
@@ -111,7 +116,7 @@ class RealNum extends Base
 
 
     /**
-     * Retrieve the default maximum number of decimal places available to use
+     * Retrieve the default maximum number of decimal places available to use.
      *
      * @return integer
      */
@@ -121,7 +126,7 @@ class RealNum extends Base
     }
 
     /**
-     * Update the default maximum number of decimal places available to use
+     * Update the default maximum number of decimal places available to use.
      *
      * @param integer $maxDecPl The decimal places to set.
      * @return void
@@ -133,7 +138,7 @@ class RealNum extends Base
 
 
     /**
-     * Get various values stored in this object
+     * Get various values stored in this object.
      *
      * @param string $name The field to get.
      * @return mixed
@@ -159,7 +164,7 @@ class RealNum extends Base
 
 
     /**
-     * Set the maximum number of decimal places available for this object to use
+     * Set the maximum number of decimal places available for this object to use.
      *
      * @param integer $maxDecPl The new decimal-places to use.
      * @return static
@@ -171,7 +176,7 @@ class RealNum extends Base
 
 
     /**
-     * Format the current number in a readable way
+     * Format the current number in a readable way.
      *
      * @param string|array|null $options The options to use when rendering the number.
      * @return string
@@ -265,9 +270,10 @@ class RealNum extends Base
     }
 
     /**
-     * Use the given maxDecPl, but use the current one if needed
+     * Use the given maxDecPl, but use the current one if needed.
      *
-     * Adjusts for percentage mode
+     * Adjusts itself for percentage mode.
+     *
      * @param integer $maxDecPl The decimal places to use (otherwise the current one is used).
      * @return integer
      */

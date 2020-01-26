@@ -17,37 +17,39 @@ use NumberFormatter;
  *
  * PHP's bcmath functions are used internally for the maths calculations.
  * PHP's NumberFormatter is used to format the readable output.
- * @property ?callable $localeResolver
- * @property integer   $maxDecPl
- * @property string    $locale
- * @property boolean   $immutable
- * @property array     $formatSettings
- * @property ?string   $val
- * @property ?float    $cast
+ *
+ * @property callable|null $localeResolver
+ * @property integer       $maxDecPl
+ * @property string        $locale
+ * @property boolean       $immutable
+ * @property array         $formatSettings
+ * @property string|null   $val
+ * @property float|null    $cast
  */
 abstract class Base
 {
     /**
-     * The original default maxDecPl - used when resetting the class-level defaults
+     * The original default maxDecPl - used when resetting the class-level defaults.
      */
     const ORIG_MAX_DEC_PL = 20;
 
     /**
-     * The original default immuatble-setting - used when resetting the class-level defaults
+     * The original default immuatble-setting - used when resetting the class-level defaults.
      */
     const ORIG_IMMUTABLE = true;
 
     /**
-     * The original default format-settings - used when resetting the class-level defaults
+     * The original default format-settings - used when resetting the class-level defaults.
      */
     const ORIG_FORMAT_SETTINGS = null;
 
 
 
     /**
-     * The default maximum number of decimal places available to use (at the class-level)
+     * The default maximum number of decimal places available to use (at the class-level).
      *
      * Objects will pick this value up when instantiated.
+     *
      * @var integer
      */
     protected static $defaultMaxDecPl = 20;
@@ -56,6 +58,7 @@ abstract class Base
      * The default immutable-setting (at the class-level).
      *
      * Objects will pick this value up when instantiated.
+     *
      * @var boolean
      */
     protected static $defaultImmutable = true;
@@ -64,6 +67,7 @@ abstract class Base
      * The default settings to use when formatting the number (at the class-level).
      *
      * Objects will pick this value up when instantiated.
+     *
      * @var array
      */
     protected static $defaultFormatSettings = [
@@ -73,51 +77,53 @@ abstract class Base
 
 
     /**
-     * The maximum number of decimal places available to use
+     * The maximum number of decimal places available to use.
      *
-     * @var ?integer
+     * @var integer|null
      */
     protected $maxDecPl = null;
 
     /**
-     * Whether this object should act in an immutable way or not
+     * Whether this object should act in an immutable way or not.
      *
-     * @var ?boolean
+     * @var boolean|null
      */
     protected $immutable = null;
 
     /**
-     * This object's current format settings
+     * This object's current format settings.
      *
-     * @var ?array
+     * @var array|null
      */
     protected $formatSettings = null;
 
 
 
     /**
-     * The value this object represents
+     * The value this object represents.
      *
-     * @var ?string
+     * @var string|null
      */
     protected $value = null;
 
 
 
-
-
     /**
-     * Callback used to resolve localeIdentifiers
+     * Callback used to resolve localeIdentifiers.
      *
      * It may for example understand database ids, and map them back to their 'en-AU' equivalent.
      * When this hasn't been set, the locales are assumed to be strings like 'en-AU' and treated as is.
-     * @var ?callable
+     *
+     * @var callable|null
      */
     protected static $localeResolver = null;
 
 
+
+
+
     /**
-     * Constructor
+     * Constructor.
      *
      * @param integer|float|string|self|null $value          The initial value to store.
      * @param boolean                        $throwException Should an exception be thrown if the $value is invalid?
@@ -154,7 +160,7 @@ abstract class Base
     }
 
     /**
-     * Called upon instantiation - allows for child classes to perform some set-up
+     * Called upon instantiation - allows for child classes to perform some set-up.
      *
      * @return void
      */
@@ -163,7 +169,7 @@ abstract class Base
     }
 
     /**
-     * return a clone of this object
+     * return a clone of this object.
      *
      * @return static
      */
@@ -179,9 +185,10 @@ abstract class Base
 
 
     /**
-     * Set the default values back to their original value
+     * Set the default values back to their original value.
      *
-     * This is used during unit tests as these default values are static properties
+     * This is used during unit tests as these default values are static properties.
+     *
      * @return void
      */
     public static function resetDefaults(): void
@@ -194,7 +201,7 @@ abstract class Base
     }
 
     /**
-     * Retrieve the default locale
+     * Retrieve the default locale.
      *
      * @return integer|string
      */
@@ -204,7 +211,7 @@ abstract class Base
     }
 
     /**
-     * Update the default locale
+     * Update the default locale.
      *
      * @param integer|string $locale The locale to set.
      * @return void
@@ -216,7 +223,7 @@ abstract class Base
     }
 
     /**
-     * Retrieve the default immutable-setting
+     * Retrieve the default immutable-setting.
      *
      * @return boolean
      */
@@ -226,7 +233,7 @@ abstract class Base
     }
 
     /**
-     * Update the default immutable-setting
+     * Update the default immutable-setting.
      *
      * @param boolean $immutable The immutable setting to set.
      * @return void
@@ -237,7 +244,7 @@ abstract class Base
     }
 
     /**
-     * Retrieve the default format settings
+     * Retrieve the default format settings.
      *
      * @return array
      */
@@ -247,7 +254,7 @@ abstract class Base
     }
 
     /**
-     * Update the default format settings
+     * Update the default format settings.
      *
      * @param string|array|null $formatSettings The immutable setting to set.
      * @return void
@@ -261,7 +268,7 @@ abstract class Base
 
 
     /**
-     * Get various values stored in this object
+     * Get various values stored in this object.
      *
      * @param string $name The field to get.
      * @return mixed
@@ -307,7 +314,7 @@ abstract class Base
     }
 
     /**
-     * Update various values stored in this object
+     * Update various values stored in this object.
      *
      * @param string $name  The name of the value to set.
      * @param mixed  $value The value to store.
@@ -336,7 +343,7 @@ abstract class Base
 
 
     /**
-     * Update the localeResolver
+     * Update the localeResolver.
      *
      * @param callable|null $localeResolver A closure used to resolve locale-identifiers.
      * @return void
@@ -347,7 +354,7 @@ abstract class Base
     }
 
     /**
-     * Return the localeResolver
+     * Return the localeResolver.
      *
      * @return callable|null
      */
@@ -357,7 +364,7 @@ abstract class Base
     }
 
     /**
-     * Take the given $localeIdentifier and return the relevant locale-code
+     * Take the given $localeIdentifier and return the relevant locale-code.
      *
      * @param integer|string|null $localeIdentifier Identifier of the locale to resolve.
      * @return string
@@ -390,7 +397,7 @@ abstract class Base
 
 
     /**
-     * Set the locale this object uses
+     * Set the locale this object uses.
      *
      * @param integer|string $locale The new locale to use.
      * @return static
@@ -404,7 +411,7 @@ abstract class Base
     }
 
     /**
-     * Set the immutable-setting this object uses
+     * Set the immutable-setting this object uses.
      *
      * @param boolean $immutable The new immutable-setting to use.
      * @return static
@@ -417,7 +424,7 @@ abstract class Base
     }
 
     /**
-     * This object's current format settings
+     * This object's current format settings.
      *
      * @param string|array|null $formatSettings The immutable setting to set.
      * @return static
@@ -430,7 +437,7 @@ abstract class Base
     }
 
     /**
-     * Set the value this object represents
+     * Set the value this object represents.
      *
      * @param integer|float|string|self|null $value          The value to set.
      * @param boolean                        $throwException Throw an exception if the given value isn't valid?.
@@ -443,7 +450,7 @@ abstract class Base
     }
 
     /**
-     * Set the value this object represents - alias for val(..)
+     * Set the value this object represents - alias for val(..).
      *
      * @param integer|float|string|self|null $value          The value to set.
      * @param boolean                        $throwException Throw an exception if the given value isn't valid?.
@@ -479,7 +486,7 @@ abstract class Base
     }
 
     /**
-     * Perform a floor calculation on the value contained in this object
+     * Perform a floor calculation on the value contained in this object.
      *
      * @return static
      */
@@ -495,7 +502,7 @@ abstract class Base
     }
 
     /**
-     * Perform a ceil calculation on the value contained in this object
+     * Perform a ceil calculation on the value contained in this object.
      *
      * @return static
      */
@@ -511,7 +518,7 @@ abstract class Base
     }
 
     /**
-     * Perform an add calculation on the value contained in this object
+     * Perform an add calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to add.
      * @return static
@@ -526,7 +533,7 @@ abstract class Base
     }
 
     /**
-     * Perform a sum calculation on the value contained in this object
+     * Perform a sum calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to add.
      * @return static
@@ -537,7 +544,7 @@ abstract class Base
     // }
 
     /**
-     * Perform a div calculation on the value contained in this object
+     * Perform a div calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to divide.
      * @return static
@@ -552,7 +559,7 @@ abstract class Base
     }
 
     /**
-     * Perform a mod calculation on the value contained in this object
+     * Perform a mod calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to perform modulo with.
      * @return static
@@ -563,7 +570,7 @@ abstract class Base
     // }
 
     /**
-     * Perform a mul calculation on the value contained in this object
+     * Perform a mul calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to multiply.
      * @return static
@@ -578,7 +585,7 @@ abstract class Base
     }
 
     /**
-     * Perform a pow calculation on the value contained in this object
+     * Perform a pow calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to pow.
      * @return static
@@ -588,7 +595,7 @@ abstract class Base
     // }
 
     /**
-     * Perform a sub calculation on the value contained in this object
+     * Perform a sub calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to subtract.
      * @return static
@@ -603,7 +610,7 @@ abstract class Base
     }
 
     /**
-     * Perform an avg calculation on the value contained in this object
+     * Perform an avg calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null ...$args The values to average.
      * @return static
@@ -614,7 +621,7 @@ abstract class Base
     // }
 
     /**
-     * Perform an increment calculation on the value contained in this object
+     * Perform an increment calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null $value The amount to add.
      * @return static
@@ -626,7 +633,7 @@ abstract class Base
     }
 
     /**
-     * Perform a decrement calculation on the value contained in this object
+     * Perform a decrement calculation on the value contained in this object.
      *
      * @param self|integer|float|string|null $value The values to subtract.
      * @return static
@@ -644,7 +651,7 @@ abstract class Base
 
 
     /**
-     * Check if the current value is < the given values
+     * Check if the current value is < the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -657,7 +664,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is < the given values
+     * Check if the current value is < the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -670,7 +677,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is <= the given values
+     * Check if the current value is <= the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -683,7 +690,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is <= the given values
+     * Check if the current value is <= the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -696,7 +703,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is = the given values
+     * Check if the current value is = the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -709,7 +716,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is = the given values
+     * Check if the current value is = the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -722,7 +729,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is >= the given values
+     * Check if the current value is >= the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -735,7 +742,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is >= the given values
+     * Check if the current value is >= the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -748,7 +755,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is > the given values
+     * Check if the current value is > the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -761,7 +768,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is > the given values
+     * Check if the current value is > the given values.
      *
      * @param mixed ...$comparisonValues The values to compare.
      * @return boolean
@@ -774,7 +781,7 @@ abstract class Base
     }
 
     /**
-     * Check if the current value is between the given values
+     * Check if the current value is between the given values.
      *
      * @param integer|float|string|self|null $start          The start bound.
      * @param integer|float|string|self|null $end            The end bound.
@@ -803,7 +810,7 @@ abstract class Base
 
 
     /**
-     * Perform a rounding operation on the given $value
+     * Perform a rounding operation on the given $value.
      *
      * This is to make up for the fact that a bcmath bcround function doesn't exist.
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
@@ -837,9 +844,9 @@ abstract class Base
     }
 
     /**
-     * Perform a floor operation on the given $value
+     * Perform a floor operation on the given $value.
      *
-     * This is to make up for the fact that a bcmath bcfloor function doesn't exist
+     * This is to make up for the fact that a bcmath bcfloor function doesn't exist.
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
      * @param string|null $value    The number floor.
      * @param integer     $decPl    The number of decimal places to 'floor' to.
@@ -877,9 +884,9 @@ abstract class Base
     }
 
     /**
-     * Perform a ceil operation on the given $value
+     * Perform a ceil operation on the given $value.
      *
-     * This is to make up for the fact that a bcmath bcceil function doesn't exist
+     * This is to make up for the fact that a bcmath bcceil function doesn't exist.
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
      * @param string|null $value    The number ceil.
      * @param integer     $decPl    The number of decimal places to 'ceil' to.
@@ -917,7 +924,7 @@ abstract class Base
     }
 
     /**
-     * Run the given bc-function on the given values - updating the $realNum with the result of each step
+     * Run the given bc-function on the given values - updating the $realNum with the result of each step.
      *
      * @param Base   $realNum    The initial realnum to perform the calculations on.
      * @param string $bcFunction The bcmath function to run.
@@ -969,7 +976,7 @@ abstract class Base
 
     /**
      * Compare the given $comparisonValues to the $value, and see if all of them pass the comparison rule
-     * (governed by $allowedComparisons)
+     * (governed by $allowedComparisons).
      *
      * @param string|null $value              The source value to compare.
      * @param array       $comparisonValues   The values to compare to $value.
@@ -1008,11 +1015,12 @@ abstract class Base
     }
 
     /**
-     * See if stored value is between $start and $end (it doesn't matter the order of $start and $end)
+     * See if stored value is between $start and $end (it doesn't matter the order of $start and $end).
      *
-     * if $start or $end is null, they aren't used,
-     * if both are null, no comparison is made (true will be returned)
-     * if $value is null, false will be returned
+     * if $start or $end is null, they aren't used.
+     * if both are null, no comparison is made (true will be returned).
+     * if $value is null, false will be returned.
+     *
      * @param string|null                    $value          The source value to compare.
      * @param integer|float|string|self|null $start          The start bound.
      * @param integer|float|string|self|null $end            The end bound.
@@ -1075,7 +1083,7 @@ abstract class Base
     }
 
     /**
-     * Internal method used by render(..) to perform part of the rendering
+     * Internal method used by render(..) to perform part of the rendering.
      *
      * @param string          $value              The value to render.
      * @param integer         $maxDecPl           The decimal places to use when checking the value.
@@ -1145,7 +1153,7 @@ abstract class Base
     }
 
     /**
-     * Format the current number in a readable way
+     * Format the current number in a readable way.
      *
      * @param string|array|null $options The options to use when rendering the number.
      * @return string
@@ -1159,9 +1167,9 @@ abstract class Base
 
 
     /**
-     * Returns an immutable version of this object (if enabled)
+     * Returns an immutable version of this object (if enabled).
      *
-     * @param boolean $force Will allways immute when true.
+     * @param boolean $force Will always immute when true.
      * @return static
      */
     protected function immute(bool $force = false): Base
@@ -1170,7 +1178,7 @@ abstract class Base
     }
 
     /**
-     * Retrieve the str value
+     * Retrieve the str value.
      *
      * @return string|null
      */
@@ -1183,7 +1191,7 @@ abstract class Base
     }
 
     /**
-     * Retrieve the val value
+     * Retrieve the val value.
      *
      * @return integer|float|null
      */
@@ -1200,9 +1208,10 @@ abstract class Base
     }
 
     /**
-     * Store the given value
+     * Store the given value.
      *
-     * This will round the value to match the current number of decimal-places
+     * This will round the value to match the current number of decimal-places.
+     *
      * @param integer|float|string|self|null $value          The value to store.
      * @param boolean                        $throwException Throw an exception if the given value isn't valid?.
      * @return static
@@ -1217,9 +1226,10 @@ abstract class Base
     }
 
     /**
-     * Update the decimal-places to round to
+     * Update the decimal-places to round to.
      *
      * This will round the current value (if needed) to match.
+     *
      * @param integer $decPl The new decPl to use.
      * @return static
      */
@@ -1239,9 +1249,10 @@ abstract class Base
 
     /**
      * Check the given value to see that it can be worked with, and return the value (int, float, string, null) to be
-     * used
+     * used.
      *
-     * Return it as a string for bcmath (or null)
+     * Return it as a string for bcmath (or null).
+     *
      * @param integer|float|string|self|null $value           The value to check.
      * @param integer                        $decPl           The bcmath decimal places to use.
      * @param boolean                        $allowNullString When true a 'null' string will be picked up as null.
@@ -1285,7 +1296,7 @@ abstract class Base
     }
 
     /**
-     * Ensure that the given string number has the desired number of decimal places in it
+     * Ensure that the given string number has the desired number of decimal places in it.
      *
      * @param string  $value The number to adjust.
      * @param integer $decPl The number of decimal places to ensure exist.
@@ -1300,7 +1311,7 @@ abstract class Base
     }
 
     /**
-     * Detect how many decimal places the given string has
+     * Detect how many decimal places the given string has.
      *
      * @param string $value The value to inspect.
      * @return integer
@@ -1313,7 +1324,7 @@ abstract class Base
     }
 
     /**
-     * Check if the passed arguments are compatible for operations on this object
+     * Check if the passed arguments are compatible for operations on this object.
      *
      * @param array   $args           The arguments to check against this.
      * @param boolean $throwException Should an exception be raised if the given value isn't valid?.
@@ -1330,9 +1341,10 @@ abstract class Base
     }
 
     /**
-     * Check if the passed value is compatible for operations on this object
+     * Check if the passed value is compatible for operations on this object.
      *
-     * (This may be overridden by child classes)
+     * (This may be overridden by child classes).
+     *
      * @param mixed   $value          The value to check against the value stored in this object.
      * @param boolean $throwException Should an exception be raised if the given value isn't valid?.
      * @return boolean
@@ -1371,7 +1383,7 @@ abstract class Base
 
 
     /**
-     * Use the given locale, but use the current one if needed
+     * Use the given locale, but use the current one if needed.
      *
      * @param integer|string|null $localeIdentifier The locale to force (otherwise the current one is used).
      * @return string
@@ -1389,9 +1401,10 @@ abstract class Base
     }
 
     /**
-     * Use the given maxDecPl, but use the current one if needed
+     * Use the given maxDecPl, but use the current one if needed.
      *
-     * Adjusts for percentage mode
+     * Adjusts for percentage mode.
+     *
      * @param integer $maxDecPl The decimal places to use (otherwise the current one is used).
      * @return integer
      */
@@ -1402,7 +1415,7 @@ abstract class Base
     }
 
     /**
-     * Use the given immutable-setting, but use the current one if needed
+     * Use the given immutable-setting, but use the current one if needed.
      *
      * @param boolean|null $immutable The $immutable to force (otherwise the current one is used).
      * @return boolean

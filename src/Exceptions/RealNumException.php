@@ -5,7 +5,7 @@ namespace CodeDistortion\RealNum\Exceptions;
 use Exception;
 
 /**
- * Exception class for realnum exceptions
+ * The main RealNum exception class.
  */
 class RealNumException extends Exception
 {

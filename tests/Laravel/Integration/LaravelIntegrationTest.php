@@ -8,7 +8,7 @@ use CodeDistortion\RealNum\Percent;
 use CodeDistortion\RealNum\Tests\Laravel\TestCase;
 
 /**
- * Test the RealNum's integration into Laravel
+ * Test the RealNum's integration into Laravel.
  *
  * @group laravel
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -16,7 +16,7 @@ use CodeDistortion\RealNum\Tests\Laravel\TestCase;
 class LaravelIntegrationTest extends TestCase
 {
     /**
-     * Test that the service-provider is registered in Laravel and acts correctly
+     * Test that the service-provider is registered in Laravel and acts correctly.
      *
      * @test
      * @return void

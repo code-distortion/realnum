@@ -11,12 +11,12 @@ use Illuminate\Events\EventDispatcher;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**
- * RealNum & Percent ServiceProvider for Laravel
+ * RealNum & Percent ServiceProvider for Laravel.
  */
 class ServiceProvider extends BaseServiceProvider
 {
     /**
-     * Service-provider register method
+     * Service-provider register method.
      *
      * @return void
      */
@@ -26,7 +26,7 @@ class ServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * Service-provider boot method
+     * Service-provider boot method.
      *
      * @return void
      * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
@@ -41,7 +41,7 @@ class ServiceProvider extends BaseServiceProvider
 
 
     /**
-     * Initialise the config settings/file
+     * Initialise the config settings/file.
      *
      * @return void
      */
@@ -63,7 +63,7 @@ class ServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * Set the RealNum & Percent default values
+     * Set the RealNum & Percent default values.
      *
      * @return void
      * @throws InvalidLocaleException Thrown when the locale cannot be resolved.
@@ -89,7 +89,7 @@ class ServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * Listen for locale changes
+     * Listen for locale changes.
      *
      * @return void
      */
@@ -114,7 +114,7 @@ class ServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * Ensure the given thing is an event dispatcher
+     * Ensure the given thing is an event dispatcher.
      *
      * @param mixed $instance The object to check.
      * @return boolean
@@ -127,7 +127,7 @@ class ServiceProvider extends BaseServiceProvider
     }
 
     /**
-     * Update the RealNum & Percent locale
+     * Update the RealNum & Percent locale.
      *
      * @return void
      * @throws InvalidLocaleException Thrown when the locale cannot be resolved.

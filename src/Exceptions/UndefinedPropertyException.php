@@ -3,12 +3,12 @@
 namespace CodeDistortion\RealNum\Exceptions;
 
 /**
- * Exception for when undefined properties are accessed
+ * Exception for when undefined properties are accessed.
  */
 class UndefinedPropertyException extends RealNumException
 {
     /**
-     * Return a new instance when a undefined property was accessed
+     * Return a new instance when a undefined property was accessed.
      *
      * @param string $name The name of the unexpected property being accessed.
      * @return static

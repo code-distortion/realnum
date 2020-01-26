@@ -7,7 +7,7 @@ use CodeDistortion\RealNum\Percent;
 use CodeDistortion\RealNum\RealNum;
 
 /**
- * Test the Percent library class
+ * Test the Percent library class.
  *
  * @group standalone
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -15,7 +15,7 @@ use CodeDistortion\RealNum\RealNum;
 class PercentUnitTest extends TestCase
 {
     /**
-     * Some set-up, run before each test
+     * Some set-up, run before each test.
      *
      * @return void
      */
@@ -28,7 +28,7 @@ class PercentUnitTest extends TestCase
     }
 
     /**
-     * Provides the different render options for testing in the test_percentage_rendering test below
+     * Provides the different render options for testing in the test_percentage_rendering test below.
      *
      * @return array
      */
@@ -113,7 +113,7 @@ class PercentUnitTest extends TestCase
 
 
     /**
-     * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered
+     * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered.
      *
      * @test
      * @return void
@@ -147,7 +147,7 @@ class PercentUnitTest extends TestCase
     }
 
     /**
-     * Test arithmetic and rounding operations
+     * Test arithmetic and rounding operations.
      *
      * @test
      * @return void
@@ -175,7 +175,7 @@ class PercentUnitTest extends TestCase
     }
 
     /**
-     * Test the different ways to the Percentage value can be rendered
+     * Test the different ways to the Percentage value can be rendered.
      *
      * @test
      * @dataProvider renderingDataProvider

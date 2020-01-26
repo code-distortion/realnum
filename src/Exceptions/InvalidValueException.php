@@ -3,14 +3,14 @@
 namespace CodeDistortion\RealNum\Exceptions;
 
 /**
- * Exception for when invalid arguments are passed
+ * Exception for when invalid arguments are passed.
  */
 class InvalidValueException extends RealNumException
 {
     use ExceptionTrait;
 
     /**
-     * Return a new instance when no comparison values were passed
+     * Return a new instance when no comparison values were passed.
      *
      * @return static
      */
@@ -20,7 +20,7 @@ class InvalidValueException extends RealNumException
     }
 
     /**
-     * Return a new instance when the given value is not numeric
+     * Return a new instance when the given value is not numeric.
      *
      * @param mixed $value The non-numeric value.
      * @return static
@@ -31,7 +31,7 @@ class InvalidValueException extends RealNumException
     }
 
     /**
-     * Return a new instance when an object of the given class is incompatible
+     * Return a new instance when an object of the given class is incompatible.
      *
      * @param string $class The incompatible class.
      * @return static

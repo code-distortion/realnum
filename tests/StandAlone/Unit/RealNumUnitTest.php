@@ -12,7 +12,7 @@ use PHPUnit\Framework\Error\Warning;
 use stdClass;
 
 /**
- * Test the RealNum library class
+ * Test the RealNum library class.
  *
  * @group standalone
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -20,7 +20,7 @@ use stdClass;
 class RealNumUnitTest extends TestCase
 {
     /**
-     * Some alternate format settings used below for testing
+     * Some alternate format settings used below for testing.
      *
      * @var array
      */
@@ -38,7 +38,7 @@ class RealNumUnitTest extends TestCase
 
 
     /**
-     * Some set-up, run before each test
+     * Some set-up, run before each test.
      *
      * @return void
      */
@@ -51,7 +51,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Provides the different immutable situations to test for the test_realnum_immutability_setters test below
+     * Provides the different immutable situations to test for the test_realnum_immutability_setters test below.
      *
      * @return array
      */
@@ -96,7 +96,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Provides the different immutable situations to test for the test_realnum_immutability_alter_methods test below
+     * Provides the different immutable situations to test for the test_realnum_immutability_alter_methods test below.
      *
      * @return array
      */
@@ -131,7 +131,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Provides the different render options for testing in the test_realnum_locale_rendering test below
+     * Provides the different render options for testing in the test_realnum_locale_rendering test below.
      *
      * @return array
      */
@@ -287,7 +287,7 @@ class RealNumUnitTest extends TestCase
 
 
     /**
-     * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered
+     * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered.
      *
      * @test
      * @return void
@@ -335,7 +335,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the ways the RealNum class can be instantiated
+     * Test the ways the RealNum class can be instantiated.
      *
      * @test
      * @return void
@@ -381,7 +381,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the various ways of changing values in RealNum when immutable / not immutable
+     * Test the various ways of changing values in RealNum when immutable / not immutable.
      *
      * @test
      * @dataProvider immutableDataProviderSetters
@@ -414,7 +414,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the immutability when using methods that alter a RealNum's value
+     * Test the immutability when using methods that alter a RealNum's value.
      *
      * @test
      * @dataProvider immutableDataProviderAlterationMethods
@@ -444,7 +444,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test setting various RealNum values
+     * Test setting various RealNum values.
      *
      * @test
      * @return void
@@ -481,7 +481,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the various methods that perform a RealNum calculation
+     * Test the various methods that perform a RealNum calculation.
      *
      * @test
      * @return void
@@ -547,7 +547,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the various methods that perform a calculation and generate a result
+     * Test the various methods that perform a calculation and generate a result.
      *
      * @test
      * @return void
@@ -760,7 +760,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the different ways to get the value from RealNum
+     * Test the different ways to get the value from RealNum.
      *
      * @test
      * @return void
@@ -790,7 +790,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test RealNum calculations with many decimal places
+     * Test RealNum calculations with many decimal places.
      *
      * @test
      * @return void
@@ -825,7 +825,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the different ways to render the RealNum value
+     * Test the different ways to render the RealNum value.
      *
      * @test
      * @return void
@@ -846,7 +846,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the different ways to the RealNum value can be rendered
+     * Test the different ways to the RealNum value can be rendered.
      *
      * @test
      * @dataProvider localeRenderingDataProvider
@@ -872,7 +872,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the __toString magic method
+     * Test the __toString magic method.
      *
      * @test
      * @return void
@@ -884,7 +884,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test how the RealNum class handles different decimal places, and rounding
+     * Test how the RealNum class handles different decimal places, and rounding.
      *
      * @test
      * @return void
@@ -928,7 +928,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test how the RealNum class' default locale is set and used
+     * Test how the RealNum class' default locale is set and used.
      *
      * @test
      * @return void
@@ -948,7 +948,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the locale resolver
+     * Test the locale resolver.
      *
      * @test
      * @return void
@@ -967,7 +967,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the different values that RealNum can use
+     * Test the different values that RealNum can use.
      *
      * @test
      * @return void
@@ -1002,7 +1002,7 @@ class RealNumUnitTest extends TestCase
     }
 
     /**
-     * Test the ways RealNum generates exceptions
+     * Test the ways RealNum generates exceptions.
      *
      * @test
      * @return void
