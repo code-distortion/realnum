@@ -14,6 +14,7 @@ use stdClass;
 /**
  * Test the RealNum library class
  *
+ * @group standalone
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
 class RealNumUnitTest extends TestCase

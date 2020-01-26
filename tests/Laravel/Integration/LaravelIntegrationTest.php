@@ -10,6 +10,7 @@ use CodeDistortion\RealNum\Tests\Laravel\TestCase;
 /**
  * Test the RealNum's integration into Laravel
  *
+ * @group laravel
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
 class LaravelIntegrationTest extends TestCase

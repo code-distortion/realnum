@@ -13,11 +13,11 @@ jobs:
         runs-on: ${{ matrix.os }}
 
         strategy:
-            fail-fast: false
+            fail-fast: true
             matrix:
                 os: [ubuntu-latest]
                 php: [7.4]
-                testbench: [^4.0, 3.8.*, 3.7.*, 3.6.*, 3.5.*, 3.4.*, 3.3.*]
+                testbench: [^4.0, 3.8.*, 3.7.*, 3.6.*, 3.5.*, 3.4.*, 3.3.*, 3.2.*]
                 dependency-prefer: [prefer-stable, prefer-lowest]
                 include:
                     -   testbench: ^4.0
@@ -33,8 +33,9 @@ jobs:
                     -   testbench: 3.4.*
                         phpunit: ~5.7
                     -   testbench: 3.3.*
-                        phpunit: ~5.5
-                    # testbench <= 3.2 requires phpunit < 5.5. It extends upon PHPUnit_Framework_TestCase. However the unit tests in this package extend from PHPUnit\Framework\TestCase which is only available in phpunit >= 5.5
+                        phpunit: ~4.8 || ~5.0
+                    -   testbench: 3.2.*
+                        phpunit: ~4.8|~5.0
 
         steps:
             -   name: Checkout code
@@ -44,7 +45,7 @@ jobs:
                 uses: shivammathur/setup-php@v1
                 with:
                     php-version: ${{ matrix.php }}
-                    extensions: mbstring, bcmath, intl
+                    extensions: bcmath, intl, mbstring
                     coverage: none
 
             # find out composer's cache directory on the current os - for the "Cache composer dependencies" step below
@@ -69,20 +70,16 @@ jobs:
 
     php-version-tests:
 
-        name: PHP ver test - PHP ${{ matrix.php }} - TestBench ${{ matrix.testbench}} - ${{ matrix.os }} - ${{ matrix.dependency-prefer }}
+        name: PHP ver test - PHP ${{ matrix.php }} - ${{ matrix.os }} - ${{ matrix.dependency-prefer }}
 
         runs-on: ${{ matrix.os }}
 
         strategy:
-            fail-fast: false
+            fail-fast: true
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
                 php: [7.4, 7.3, 7.2, 7.1]
-                testbench: [3.8.*]
                 dependency-prefer: [prefer-stable, prefer-lowest]
-                include:
-                    -   testbench: 3.8.*
-                        phpunit: ^7.5 || ^8.0
                 exclude:
                     # the output for some numbers contains unexpected characters (they look correct but are different to every other os/php combination)
                     -   php: 7.1
@@ -96,7 +93,7 @@ jobs:
                 uses: shivammathur/setup-php@v1
                 with:
                     php-version: ${{ matrix.php }}
-                    extensions: mbstring, bcmath, intl
+                    extensions: bcmath, intl, mbstring
                     coverage: none
 
             # find out composer's cache directory on the current os - for the "Cache composer dependencies" step below
@@ -109,12 +106,11 @@ jobs:
                 uses: actions/cache@v1
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
-                    key: php-${{ matrix.php }}-testbench-${{ matrix.testbench }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
+                    key: php-${{ matrix.php }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
 
             -   name: Install dependencies (composer)
                 run: |
-                    composer require "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
                     composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction --no-suggest
 
-            -   name: Execute tests
-                run: vendor/bin/phpunit
+            -   name: Execute tests (standalone group)
+                run: vendor/bin/phpunit --group=standalone

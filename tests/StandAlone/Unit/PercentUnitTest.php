@@ -9,6 +9,7 @@ use CodeDistortion\RealNum\RealNum;
 /**
  * Test the Percent library class
  *
+ * @group standalone
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
 class PercentUnitTest extends TestCase
