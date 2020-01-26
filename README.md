@@ -9,20 +9,23 @@
 
 ***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5 & 6 but works stand-alone as well.
 
-RealNum uses PHP's [BCMath](https://www.php.net/manual/en/book.bc.php) extension to avoid inaccurate floating point calculations:
+
+| locale| RealNum | Percent |
+| :----: | :----: | :----: |
+| en-US | 1,234,567.89 | 100.98% |
+| de-DE | 1.234.567,89 | 100,98 % |
+| sv-SE | 1 234 567,89 | 100,98 % |
+| hi-IN | 12,34,567.89 | 100.98% |
+| ar-EG | ١٬٢٣٤٬٥٦٧٫٨٩ | ١٠٠٫٩٨٪؜ |
+
+Here is an example of why you might want arbitrary precision calculations:
 
 ``` php
 // an example of floating-point inaccuracy
 var_dump(0.1 + 0.2 == 0.3); // bool(false)
-// for more details see The Floating-Point Guide - https://floating-point-gui.de/
+// for more details see:
+// The Floating-Point Guide - https://floating-point-gui.de/
 ```
-
-Numbers are formatted in different locales using PHP's [NumberFormatter](https://www.php.net/manual/en/class.numberformatter.php). Some examples include:
-
-| | en-US | de-DE | sv-SE | hi-IN | ar-EG |
-| :----: | :----: | :----: | :----: | :----: | :----: |
-| RealNum | 1,234,567.89 | 1.234.567,89 | 1 234 567,89 | 12,34,567.89 | ١٬٢٣٤٬٥٦٧٫٨٩ |
-| Percent | 100.98% | 100,98 % | 100,98 % | 100.98% | ١٠٠٫٩٨٪؜ |
 
 The ***Percent*** class is also available alongside the ***RealNum*** class to perform all of the same actions as RealNum but for percentage values. See the [percentage values](#percentage-values) section below for more details.
 
@@ -99,10 +102,10 @@ You may also read other settings that RealNum uses:
 
 ``` php
 $num = RealNum::new();
-print $num->locale;         // "en"
-print $num->maxDecPl;       // 20 (the maximum number of decimal places used)
-print $num->immutable;      // true
-print $num->formatSettings; // ['null' => null, 'trailZeros' => null … ]
+print $num->locale;             // "en"
+print $num->maxDecPl;           // 20 (the maximum number of decimal places used)
+print $num->immutable;          // true
+var_dump($num->formatSettings); // ['null' => null, 'trailZeros' => null … ]
 ```
 
 ***Note:*** See the [formatting output](#formatting-output) section below for more details about how to render the value as a readable string.
@@ -187,7 +190,7 @@ You may alter the way `format()` renders the output by passing options. The opti
 
 `null=x`, `trailZeros`, `decPl=x`, `thousands`, `showPlus`, `accountingNeg`, `locale=x` and `breaking`.
 
-Options without a value can be negated by adding `!` before it.
+Boolean options (those without an equals sign) can be negated by adding `!` before it.
 
 ***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
 
@@ -248,9 +251,9 @@ print (string) RealNum::new(1234567.89); // "1,234,567.89"
 
 RealNum uses these default settings when `format()` is called: `"null=null !trailZeros decPl=null thousands !showPlus !accountingNeg locale=en !breaking"`
 
-***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
+***Note:*** When using Laravel you may change this in the package config file. See the [Laravel](#laravel) section below.
 
-***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays. The default options are stored internally as arrays.
+***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
 
 These can be adjusted per-object:
 
@@ -259,7 +262,7 @@ $num1 = RealNum::new(1234567.89)->formatSettings('!thousands showPlus');
 print $num1->format(); // "+1234567.89" (no thousands separator, show-plus)
 ```
 
-The default format-settings can be adjusted. All ***new*** RealNum objects will start with this setting:
+The default format-settings can be adjusted. All ***new*** RealNum objects will then start with this setting:
 
 ``` php
 var_dump(RealNum::getDefaultFormatSettings()); // ['null' => null, 'trailZeros' => false … ] (default)
@@ -283,11 +286,11 @@ You may change the locale per-object:
 
 ``` php
 $num1 = RealNum::new(1234567.89)->locale('fr-FR'); // (it's immutable so a new object is created)
-print $num2->locale;   // "fr-FR"
-print $num2->format(); // "1 234 567,89"
+print $num1->locale;   // "fr-FR"
+print $num1->format(); // "1 234 567,89"
 ```
 
-The default locale may be changed. All ***new*** RealNum objects will start with this setting:
+The default locale may be changed. All ***new*** RealNum objects will then start with this setting:
 
 ``` php
 RealNum::setDefaultLocale('fr-FR');
@@ -296,7 +299,7 @@ print RealNum::getDefaultLocale(); // "fr-FR"
 
 ### Precision (maximum decimal places)
 
-***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
+***Note:*** When using Laravel you may change this in the package config file. See the [Laravel](#laravel) section below.
 
 The `maxDecPl` precision setting is the maximum number of decimal places you would like RealNum to handle. A maxDecPl of 20 is used by default but you may change this per-object:
 
@@ -307,7 +310,7 @@ $num = RealNum::new()->maxDecPl(30)->val('0.123456789012345678901234567890');
 print $num->val; // "0.123456789012345678901234567890" the full 30 decimal places
 ```
 
-The default precision may be changed. All ***new*** RealNum objects will start with this setting:
+The default precision may be changed. All ***new*** RealNum objects will then start with this setting:
 
 ``` php
 RealNum::setDefaultMaxDecPl(30);
@@ -316,9 +319,9 @@ print RealNum::getDefaultMaxDecPl(); // 30
 
 ### Immutability
 
-***Note:*** When using Laravel you may set this in the package config file. See the [Laravel](#laravel) section below.
+***Note:*** When using Laravel you may change this in the package config file. See the [Laravel](#laravel) section below.
 
-RealNum is immutable by default which means that once an object is created it won't change. Anything that changes the value will return a new RealNum instead. You can then pass a RealNum object to other parts of your code and be sure that it won't be changed unexpectedly:
+RealNum is immutable by default which means that once an object is created it won't change. Anything that changes its contents will return a new RealNum instead. This way you can pass a RealNum object to other parts of your code and be sure that it won't be changed unexpectedly:
 
 ``` php
 $num1 = RealNum::new(1);
@@ -336,7 +339,7 @@ print $num1->format(); // "3"
 print $num2->format(); // "3"
 ```
 
-Immutability may be turned off by default. All ***new*** RealNum objects will start with this setting:
+Immutability may be turned off by default. All ***new*** RealNum objects will then start with this setting:
 
 ``` php
 RealNum::setDefaultImmutability(false);
@@ -370,7 +373,7 @@ print htmlentities($num->format('breaking'));     // "1 234 567,89" (regular spa
 
 ### Chaining
 
-The *setting* and *calculation* methods above may be chained together:
+The *setting* and *calculation* methods above may be chained together. eg.
 
 ``` php
 print RealNum::new(1)
