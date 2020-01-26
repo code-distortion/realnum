@@ -289,7 +289,6 @@ class RealNumUnitTest extends TestCase
      *
      * @test
      * @return void
-     * @throws \CodeDistortion\RealNum\Exceptions\InvalidValueException
      */
     public function test_realnum_default_settings(): void
     {

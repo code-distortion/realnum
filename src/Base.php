@@ -848,30 +848,32 @@ abstract class Base
      */
     protected static function floorCalculation(?string $value, ?int $decPl, int $maxDecPl): ?string
     {
-        if ((is_string($value)) && (mb_strlen($value))) {
-            if (mb_strpos($value, '.') !== false) {
+        if ((!is_string($value)) || (!mb_strlen($value))) {
+            return null;
+        }
 
-                $decPl = (!is_null($decPl) ? min($decPl, $maxDecPl) : $maxDecPl);
-
-                // if it contains a decimal point
-                if (preg_match("~\.[0]+$~", $value)) {
-                    return static::roundCalculation($value, $decPl, $maxDecPl);
-                // if it's positive
-                } elseif ($value[0] != '-') {
-                    $value = bcadd($value, '0', $decPl);
-                // or if it's negative
-                } else {
-
-                    $delta = ($decPl <= 0
-                        ? '1'.str_repeat('0', -$decPl)
-                        : '0.'.str_repeat('0', $decPl - 1).'1');
-
-                    $value = bcsub($value, $delta, $decPl);
-                }
-            }
+        if (mb_strpos($value, '.') === false) {
             return static::ensureDecimalPlaces($value, $maxDecPl);
         }
-        return null;
+
+        $decPl = (!is_null($decPl) ? min($decPl, $maxDecPl) : $maxDecPl);
+
+        // if it contains a decimal point
+        if (preg_match("~\.[0]+$~", $value)) {
+            return static::roundCalculation($value, $decPl, $maxDecPl);
+        // if it's positive
+        } elseif ($value[0] != '-') {
+            $value = bcadd($value, '0', $decPl);
+        // or if it's negative
+        } else {
+
+            $delta = ($decPl <= 0
+                ? '1'.str_repeat('0', -$decPl)
+                : '0.'.str_repeat('0', $decPl - 1).'1');
+
+            $value = bcsub($value, $delta, $decPl);
+        }
+        return static::ensureDecimalPlaces($value, $maxDecPl);
     }
 
     /**
@@ -886,30 +888,32 @@ abstract class Base
     */
     protected static function ceilCalculation(?string $value, ?int $decPl, int $maxDecPl): ?string
     {
-        if ((is_string($value)) && (mb_strlen($value))) {
-            if (mb_strpos($value, '.') !== false) {
+        if ((!is_string($value)) || (!mb_strlen($value))) {
+            return null;
+        }
 
-                $decPl = (!is_null($decPl) ? min($decPl, $maxDecPl) : $maxDecPl);
-
-                // if it contains a decimal point
-                if (preg_match("~\.[0]+$~", $value)) {
-                    return static::roundCalculation($value, $decPl, $maxDecPl);
-                // if it's positive
-                } elseif ($value[0] != '-') {
-
-                    $delta = ($decPl <= 0
-                        ? '1'.str_repeat('0', -$decPl)
-                        : '0.'.str_repeat('0', $decPl - 1).'1');
-
-                    $value = bcadd($value, $delta, $decPl);
-                // or if it's negative
-                } else {
-                    $value = bcsub($value, '0', $decPl);
-                }
-            }
+        if (mb_strpos($value, '.') === false) {
             return static::ensureDecimalPlaces($value, $maxDecPl);
         }
-        return null;
+
+        $decPl = (!is_null($decPl) ? min($decPl, $maxDecPl) : $maxDecPl);
+
+        // if it contains a decimal point
+        if (preg_match("~\.[0]+$~", $value)) {
+            return static::roundCalculation($value, $decPl, $maxDecPl);
+        // if it's positive
+        } elseif ($value[0] != '-') {
+
+            $delta = ($decPl <= 0
+                ? '1'.str_repeat('0', -$decPl)
+                : '0.'.str_repeat('0', $decPl - 1).'1');
+
+            $value = bcadd($value, $delta, $decPl);
+        // or if it's negative
+        } else {
+            $value = bcsub($value, '0', $decPl);
+        }
+        return static::ensureDecimalPlaces($value, $maxDecPl);
     }
 
     /**
@@ -930,33 +934,34 @@ abstract class Base
         // allow these bcmath functions to work this way (they accept two values, and a 3rd $scale (decimal places)
         // parameter)
         // if (in_array($bcFunction, ['bcadd', 'bcdiv', 'bcmod', 'bcmul', 'bcpow', 'bcsub', ])) {
-        if (in_array($bcFunction, ['bcadd', 'bcdiv',          'bcmul', 'bcpow', 'bcsub', ])) {
+        if (!in_array($bcFunction, ['bcadd', 'bcdiv',          'bcmul', 'bcpow', 'bcsub', ])) {
+            return $realNum;
+        }
 
-            // apply the calculation to each given
-            foreach ($args as $value) {
+        // apply the calculation to each given
+        foreach ($args as $value) {
 
-                // if a RealNum was given, turn it into a string (or null)
-                if ($value instanceof self) {
-                    $value = $value->getVal();
-                }
+            // if a RealNum was given, turn it into a string (or null)
+            if ($value instanceof self) {
+                $value = $value->getVal();
+            }
 
-                if ((!is_null($realNum->value)) || (!is_null($value))) {
+            if ((!is_null($realNum->value)) || (!is_null($value))) {
 
-                    $maxDecPl = (int) $realNum->maxDecPl;
+                $maxDecPl = (int) $realNum->maxDecPl;
 
-                    // don't adjust the given operand, leave as is
-                    $value = $realNum->extractBasicValue($value, $maxDecPl);
-                    // perform the calculation
-                    $newValue = (is_callable($bcFunction) // to please phpstan
-                        ? call_user_func_array($bcFunction, [$realNum->value, $value, $maxDecPl])
-                        : null
-                    );
-                    // round the result
-                    $realNum->value = (!is_null($newValue)
-                        ? (string) $realNum->roundCalculation($newValue, $maxDecPl, $maxDecPl)
-                        : null
-                    );
-                }
+                // don't adjust the given operand, leave as is
+                $value = $realNum->extractBasicValue($value, $maxDecPl);
+                // perform the calculation
+                $newValue = (is_callable($bcFunction) // to please phpstan
+                    ? call_user_func_array($bcFunction, [$realNum->value, $value, $maxDecPl])
+                    : null
+                );
+                // round the result
+                $realNum->value = (!is_null($newValue)
+                    ? (string) $realNum->roundCalculation($newValue, $maxDecPl, $maxDecPl)
+                    : null
+                );
             }
         }
         return $realNum;
@@ -980,25 +985,26 @@ abstract class Base
         int $maxDecPl
     ): bool {
 
-        if (count($comparisonValues)) {
-            foreach ($comparisonValues as $comparisonValue) {
+        if (!count($comparisonValues)) {
+            throw InvalidValueException::noComparisonValues();
+        }
 
-                // if a RealNum was given, turn it into a string (or null)
-                if ($comparisonValue instanceof self) {
-                    $comparisonValue = $comparisonValue->getVal();
-                }
+        foreach ($comparisonValues as $comparisonValue) {
 
-                if ((!is_null($value)) || (!is_null($comparisonValue))) {
-                    $comparison = (bccomp((string) $value, $comparisonValue, $maxDecPl));
+            // if a RealNum was given, turn it into a string (or null)
+            if ($comparisonValue instanceof self) {
+                $comparisonValue = $comparisonValue->getVal();
+            }
 
-                    if (!in_array($comparison, $allowedComparisons)) {
-                        return false;
-                    }
+            if ((!is_null($value)) || (!is_null($comparisonValue))) {
+                $comparison = (bccomp((string) $value, $comparisonValue, $maxDecPl));
+
+                if (!in_array($comparison, $allowedComparisons)) {
+                    return false;
                 }
             }
-            return true;
         }
-        throw InvalidValueException::noComparisonValues();
+        return true;
     }
 
     /**
@@ -1025,47 +1031,47 @@ abstract class Base
         bool$throwException = true
     ): bool {
 
-        if (!is_null($value)) {
-
-            $start = static::extractBasicValue($start, $decPl, true, $throwException);
-            $end = static::extractBasicValue($end, $decPl, true, $throwException);
-            $min = $max = null;
-
-            // between $start and $end (doesn't matter the order)
-            if ((!is_null($start)) && (!is_null($end))) {
-
-                // swap start and end if needed
-                switch (bccomp($start, $end, $decPl)) {
-                    case -1:
-                        $min = $start;
-                        $max = $end;
-                        break;
-                    case 1:
-                        $min = $end;
-                        $max = $start;
-                        break;
-                    default: // case 0:
-                        $min = $max = $start;
-                }
-            } elseif (!is_null($start)) { // > or >= $start
-                $min = $start;
-            } elseif (!is_null($end)) { // <= or < $end
-                $max = $end;
-            }
-
-            // compare $value to the bounds
-            if ((!is_null($min))
-            && (!in_array(bccomp($value, $min, $decPl), ($inclusive ? [0, 1] : [1])))) {
-                return false;
-            }
-            if ((!is_null($max))
-            && (!in_array(bccomp($value, $max, $decPl), ($inclusive ? [-1, 0] : [-1])))) {
-                return false;
-            }
-
-            return true;
+        if (is_null($value)) {
+            return false;
         }
-        return false;
+
+        $start = static::extractBasicValue($start, $decPl, true, $throwException);
+        $end = static::extractBasicValue($end, $decPl, true, $throwException);
+        $min = $max = null;
+
+        // between $start and $end (doesn't matter the order)
+        if ((!is_null($start)) && (!is_null($end))) {
+
+            // swap start and end if needed
+            switch (bccomp($start, $end, $decPl)) {
+                case -1:
+                    $min = $start;
+                    $max = $end;
+                    break;
+                case 1:
+                    $min = $end;
+                    $max = $start;
+                    break;
+                default: // case 0:
+                    $min = $max = $start;
+            }
+        } elseif (!is_null($start)) { // > or >= $start
+            $min = $start;
+        } elseif (!is_null($end)) { // <= or < $end
+            $max = $end;
+        }
+
+        // compare $value to the bounds
+        if ((!is_null($min))
+        && (!in_array(bccomp($value, $min, $decPl), ($inclusive ? [0, 1] : [1])))) {
+            return false;
+        }
+        if ((!is_null($max))
+        && (!in_array(bccomp($value, $max, $decPl), ($inclusive ? [-1, 0] : [-1])))) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1093,7 +1099,6 @@ abstract class Base
     ): string {
 
         // render accounting formatted negatives
-        $return = '';
         if (($accountingNegative) && (bccomp($value, '0', $maxDecPl) < 0)) {
 
             $absoluteAmount = bcmul($value, '-1', $maxDecPl);
