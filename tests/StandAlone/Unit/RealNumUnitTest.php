@@ -7,6 +7,7 @@ use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use CodeDistortion\RealNum\RealNum;
 use CodeDistortion\RealNum\Tests\StandAlone\TestCase;
+use PHPUnit\Framework\Constraint\Exception as ConstraintException;
 use PHPUnit\Framework\Error\Warning;
 use stdClass;
 
@@ -979,20 +980,24 @@ class RealNumUnitTest extends TestCase
         $cur2 = new RealNum(5);
         $this->assertSame(5, RealNum::new($cur2)->cast);
 
-        // initial value is invalid - boolean
-        $this->assertThrows(InvalidValueException::class, function () {
-            RealNum::new(true); // phpstan false positive
-        });
+        // PHPUnit\Framework\Constraint\Exception is required by jchook/phpunit-assert-throws
+        if (class_exists(ConstraintException::class)) {
 
-        // initial value is invalid - non-numeric string
-        $this->assertThrows(InvalidValueException::class, function () {
-            RealNum::new('abc');
-        });
+            // initial value is invalid - boolean
+            $this->assertThrows(InvalidValueException::class, function () {
+                RealNum::new(true); // phpstan false positive
+            });
 
-        // initial value is invalid - object
-        $this->assertThrows(InvalidValueException::class, function () {
-            RealNum::new(new stdClass()); // phpstan false positive
-        });
+            // initial value is invalid - non-numeric string
+            $this->assertThrows(InvalidValueException::class, function () {
+                RealNum::new('abc');
+            });
+
+            // initial value is invalid - object
+            $this->assertThrows(InvalidValueException::class, function () {
+                RealNum::new(new stdClass()); // phpstan false positive
+            });
+        }
     }
 
     /**
@@ -1003,35 +1008,39 @@ class RealNumUnitTest extends TestCase
      */
     public function test_realnum_exceptions(): void
     {
-        // (pseudo-)property abc doesn't exist to GET
-        $this->assertThrows(UndefinedPropertyException::class, function () {
-            RealNum::new()->abc; // phpstan false positive
-        });
+        // PHPUnit\Framework\Constraint\Exception is required by jchook/phpunit-assert-throws
+        if (class_exists(ConstraintException::class)) {
 
-        // (pseudo-)property abc doesn't exist to SET
-        $this->assertThrows(UndefinedPropertyException::class, function () {
-            $realNum = RealNum::new();
-            $realNum->abc = true; // phpstan false positive
-        });
+            // (pseudo-)property abc doesn't exist to GET
+            $this->assertThrows(UndefinedPropertyException::class, function () {
+                RealNum::new()->abc; // phpstan false positive
+            });
 
-        // invalid value to add
-        $this->assertThrows(InvalidValueException::class, function () {
-            RealNum::new(1)->add(true); // phpstan false positive
-        });
+            // (pseudo-)property abc doesn't exist to SET
+            $this->assertThrows(UndefinedPropertyException::class, function () {
+                $realNum = RealNum::new();
+                $realNum->abc = true; // phpstan false positive
+            });
 
-        // division by 0
-        $this->assertThrows(Warning::class, function () {
-            RealNum::new(1)->div(0);
-        });
+            // invalid value to add
+            $this->assertThrows(InvalidValueException::class, function () {
+                RealNum::new(1)->add(true); // phpstan false positive
+            });
 
-        // unresolvable locale
-        $this->assertThrows(InvalidLocaleException::class, function () {
-            RealNum::new()->locale(1);
-        });
+            // division by 0
+            $this->assertThrows(Warning::class, function () {
+                RealNum::new(1)->div(0);
+            });
 
-        // invalid value to compare
-        $this->assertThrows(InvalidValueException::class, function () {
-            $this->assertFalse(RealNum::new(1)->lt()); // no comparison value passed
-        });
+            // unresolvable locale
+            $this->assertThrows(InvalidLocaleException::class, function () {
+                RealNum::new()->locale(1);
+            });
+
+            // invalid value to compare
+            $this->assertThrows(InvalidValueException::class, function () {
+                $this->assertFalse(RealNum::new(1)->lt()); // no comparison value passed
+            });
+        }
     }
 }
