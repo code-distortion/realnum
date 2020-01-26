@@ -6,7 +6,7 @@
         "realnum",
         "percent",
         "accurate",
-        "arbitary",
+        "arbitrary",
         "precision",
         "floating",
         "real",
@@ -38,7 +38,7 @@
         "php": "^7.1",
         "ext-bcmath": "*",
         "ext-intl": "*",
-        "code-distortion/options": "^0.5"
+        "code-distortion/options": "^0.5.1"
     },
     "require-dev": {
         "jchook/phpunit-assert-throws": "^1.0",
