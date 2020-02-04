@@ -35,13 +35,14 @@ If you would like to work with *currency* values, please consider the [code-dist
 
 Install the package via composer:
 
-```bash
+``` bash
 composer require code-distortion/realnum
 ```
 
 ## Usage
 
 Instantiate a RealNum object and you can start performing calculations with it, perform comparisons, and render it as a readable string:
+
 ``` php
 use CodeDistortion\RealNum\RealNum;
 
@@ -56,6 +57,7 @@ print $num2->format();       // "9,999.99"
 ### Setting values
 
 You may set the value explicitly:
+
 ``` php
 $num1 = RealNum::new(5); // the value is set to 5 upon instantiation
 $num2 = $num1->val(10);  // and is then set to 10 (it's immutable so a new object is created)
@@ -112,7 +114,7 @@ var_dump($num->formatSettings); // ['null' => null, 'trailZeros' => null … ]
 
 ### Calculations
 
-The calculations you may perform are:
+The calculations available are:
 
 ``` php
 $num = RealNum::new(5);
@@ -128,18 +130,18 @@ $num = $num->floor();  // use the floor of the current value
 $num = $num->ceil();   // use the ceiling of the current value
 ```
 
-You may pass multiple values to `add()`, `sub()`, `div()` and `mul()`:
+The `add()`, `sub()`, `div()` and `mul()` methods accept multiple values:
 
-```php
+``` php
 RealNum::new(5)->add(4, 3, 2, 1); // 15
 RealNum::new(5)->sub(4, 3, 2, 1); // -5
 RealNum::new(5)->div(4, 3, 2, 1); // 0.2083333…
 RealNum::new(5)->mul(4, 3, 2, 1); // 120
 ```
 
-You may pass: *integer*, *float*, *numeric string* and *null* values, as well as other *RealNum* objects:
+*integer*, *float*, *numeric string* and *null* values, as well as other *RealNum* objects may be passed:
 
-```php
+``` php
 $num1 = RealNum::new(5);
 $num1 = $num1->add(2);       // pass an integer
 $num1 = $num1->add(2.0);     // pass a float
@@ -192,7 +194,7 @@ You may alter the way `format()` renders the output by passing options. The opti
 
 Boolean options (those without an equals sign) can be negated by adding `!` before it.
 
-***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
+***Note:*** `format()` options are processed using the [code-distortion/options](https://github.com/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
 
 ``` php
 print RealNum::new(null)->format('null=null');   // null (actual null - default)
@@ -235,13 +237,13 @@ print htmlentities(RealNum::new(1234567.89)->format('locale=sv-SE breaking'));  
 
 Multiple settings can be used together:
 
-```php
+``` php
 print RealNum::new(1234567.89)->format('!thousands showPlus locale=de-DE'); // "+1234567,89"
 ```
 
 Casting a RealNum to a string is equivalent to calling `format()` with no arguments:
 
-```php
+``` php
 print (string) RealNum::new(1234567.89); // "1,234,567.89"
 ```
 
@@ -253,7 +255,7 @@ RealNum uses these default settings when `format()` is called: `"null=null !trai
 
 ***Note:*** When using Laravel you may change this in the package config file. See the [Laravel](#laravel) section below.
 
-***Note:*** `format()` options are processed using the [code-distortion/options](https://packagist.org/packages/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
+***Note:*** `format()` options are processed using the [code-distortion/options](https://github.com/code-distortion/options) package so they may be passed as expressive strings or associative arrays.
 
 These can be adjusted per-object:
 
@@ -348,7 +350,7 @@ var_dump(RealNum::getDefaultImmutability()); // "bool(false)"
 
 You can explicitly make a clone of a RealNum object:
 
-```php
+``` php
 $num1 = RealNum::new();
 $num2 = $num1->copy(); // this will return a clone regardless of the immutability setting
 ```
@@ -403,7 +405,7 @@ print Percent::new(null)->format(); // null
 
 You can also use Percent objects with RealNums:
 
-```php
+``` php
 $num = RealNum::new(20);
 $percent = Percent::new(0.5); // 50%
 print $num->mul($percent);    // 10
@@ -429,7 +431,7 @@ The service-provider will register the starting locale with RealNum and Percent 
 
 #### Config
 
-You may specify default max-dec-pl, immutability and format-settings by publishing the **config/realnum.php** config file and updating it:
+You may specify default max-dec-pl, immutability and format-settings by publishing the **config/code-distortion.realnum.php** config file and updating it:
 
 ``` bash
 php artisan vendor:publish --provider="CodeDistortion\RealNum\Laravel\ServiceProvider" --tag="config"
