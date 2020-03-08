@@ -2,12 +2,12 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/code-distortion/realnum.svg?style=flat-square)](https://packagist.org/packages/code-distortion/realnum)
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/code-distortion/realnum?style=flat-square)
-![Laravel](https://img.shields.io/badge/laravel-5%20%26%206-blue?style=flat-square)
+![Laravel](https://img.shields.io/badge/laravel-5%2C%206%20%26%207-blue?style=flat-square)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/code-distortion/realnum/run-tests?label=tests&style=flat-square)](https://github.com/code-distortion/realnum/actions)
 [![Buy us a tree](https://img.shields.io/badge/treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://offset.earth/treeware?gift-trees)
 [![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
-***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5 & 6 but works stand-alone as well.
+***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5, 6 & 7 but works stand-alone as well.
 
 
 | locale| RealNum | Percent |
@@ -413,7 +413,7 @@ print $num->mul($percent);    // 10
 
 ### Laravel
 
-The RealNum package is framework agnostic and works well on it's own, but it also integrates with Laravel 5 & 6.
+The RealNum package is framework agnostic and works well on it's own, but it also integrates with Laravel 5, 6 & 7.
 
 #### Service-provider
 
