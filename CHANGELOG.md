@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
+## [0.6.4] - 2020-03-08
+
+### Added
+- Added Laravel 7
+
+
+
 ## [0.6.3] - 2020-01-29
 
 ### Changed
