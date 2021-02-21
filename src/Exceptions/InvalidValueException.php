@@ -27,7 +27,7 @@ class InvalidValueException extends RealNumException
      */
     public static function notNumeric($value): self
     {
-        return new static('The given value \''.$value.'\' is not numeric');
+        return new static('The given value \'' . $value . '\' is not numeric');
     }
 
     /**
@@ -38,6 +38,8 @@ class InvalidValueException extends RealNumException
      */
     public static function incompatibleObject(string $class): self
     {
-        return new static('Object of type '.$class.' is not compatible for operations with '.static::getCallingClass());
+        return new static(
+            'Object of type ' . $class . ' is not compatible for operations with ' . static::getCallingClass()
+        );
     }
 }

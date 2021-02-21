@@ -28,20 +28,14 @@ use NumberFormatter;
  */
 abstract class Base
 {
-    /**
-     * The original default maxDecPl - used when resetting the class-level defaults.
-     */
-    const ORIG_MAX_DEC_PL = 20;
+    /** @var integer The original default maxDecPl - used when resetting the class-level defaults. */
+    protected const ORIG_MAX_DEC_PL = 20;
 
-    /**
-     * The original default immuatble-setting - used when resetting the class-level defaults.
-     */
-    const ORIG_IMMUTABLE = true;
+    /** @var boolean The original default immuatble-setting - used when resetting the class-level defaults. */
+    protected const ORIG_IMMUTABLE = true;
 
-    /**
-     * The original default format-settings - used when resetting the class-level defaults.
-     */
-    const ORIG_FORMAT_SETTINGS = null;
+    /** @var array|null The original default format-settings - used when resetting the class-level defaults. */
+    protected const ORIG_FORMAT_SETTINGS = null;
 
 
 
@@ -827,8 +821,8 @@ abstract class Base
                 $decPl = (!is_null($decPl) ? min($decPl, $maxDecPl) : $maxDecPl);
 
                 $delta = ($decPl <= -1
-                    ? '5'.str_repeat('0', (-$decPl) - 1)
-                    : '0.'.str_repeat('0', $decPl).'5');
+                    ? '5' . str_repeat('0', (-$decPl) - 1)
+                    : '0.' . str_repeat('0', $decPl) . '5');
 
                 // if it's positive
                 if ($value[0] != '-') {
@@ -875,8 +869,8 @@ abstract class Base
         } else {
 
             $delta = ($decPl <= 0
-                ? '1'.str_repeat('0', -$decPl)
-                : '0.'.str_repeat('0', $decPl - 1).'1');
+                ? '1' . str_repeat('0', -$decPl)
+                : '0.' . str_repeat('0', $decPl - 1) . '1');
 
             $value = bcsub($value, $delta, $decPl);
         }
@@ -912,8 +906,8 @@ abstract class Base
         } elseif ($value[0] != '-') {
 
             $delta = ($decPl <= 0
-                ? '1'.str_repeat('0', -$decPl)
-                : '0.'.str_repeat('0', $decPl - 1).'1');
+                ? '1' . str_repeat('0', -$decPl)
+                : '0.' . str_repeat('0', $decPl - 1) . '1');
 
             $value = bcadd($value, $delta, $decPl);
         // or if it's negative
@@ -1036,7 +1030,7 @@ abstract class Base
         $end,
         bool $inclusive,
         int $decPl,
-        bool$throwException = true
+        bool $throwException = true
     ): bool {
 
         if (is_null($value)) {
@@ -1070,12 +1064,16 @@ abstract class Base
         }
 
         // compare $value to the bounds
-        if ((!is_null($min))
-        && (!in_array(bccomp($value, $min, $decPl), ($inclusive ? [0, 1] : [1])))) {
+        if (
+            (!is_null($min))
+            && (!in_array(bccomp($value, $min, $decPl), ($inclusive ? [0, 1] : [1])))
+        ) {
             return false;
         }
-        if ((!is_null($max))
-        && (!in_array(bccomp($value, $max, $decPl), ($inclusive ? [-1, 0] : [-1])))) {
+        if (
+            (!is_null($max))
+            && (!in_array(bccomp($value, $max, $decPl), ($inclusive ? [-1, 0] : [-1])))
+        ) {
             return false;
         }
 
@@ -1110,7 +1108,7 @@ abstract class Base
         if (($accountingNegative) && (bccomp($value, '0', $maxDecPl) < 0)) {
 
             $absoluteAmount = bcmul($value, '-1', $maxDecPl);
-            $return = '('.$renderNumber($absoluteAmount).')';
+            $return = '(' . $renderNumber($absoluteAmount) . ')';
 
         // or continue for positive and normal (non-accounting) negatives
         } else {
@@ -1135,7 +1133,7 @@ abstract class Base
                 // if for some reason the positive version couldn't be determined from the negative number,
                 // just add a plus in front
                 } else {
-                    $return = $plusSymbol.$renderNumber($value);
+                    $return = $plusSymbol . $renderNumber($value);
                 }
             // render as normal
             } else {

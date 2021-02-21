@@ -15,6 +15,6 @@ class UndefinedPropertyException extends RealNumException
      */
     public static function new(string $name): self
     {
-        return new static('Undefined property: "'.$name.'"');
+        return new static('Undefined property: "' . $name . '"');
     }
 }

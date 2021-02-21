@@ -15,6 +15,6 @@ class InvalidLocaleException extends RealNumException
      */
     public static function unresolvableLocale($localeIdentifier): self
     {
-        return new static('Locale "'.$localeIdentifier.'" could not be resolved');
+        return new static('Locale "' . $localeIdentifier . '" could not be resolved');
     }
 }

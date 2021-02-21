@@ -18,10 +18,8 @@ use Throwable;
  */
 class RealNum extends Base
 {
-    /**
-     * The original default format-settings - used when resetting the class-level defaults.
-     */
-    const ORIG_FORMAT_SETTINGS = [
+    /** @var array The original default format-settings - used when resetting the class-level defaults. */
+    public const ORIG_FORMAT_SETTINGS = [
         'null' => null,
         'trailZeros' => false,
         'decPl' => null,
