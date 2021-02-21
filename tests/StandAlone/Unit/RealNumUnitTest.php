@@ -7,6 +7,7 @@ use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use CodeDistortion\RealNum\RealNum;
 use CodeDistortion\RealNum\Tests\StandAlone\TestCase;
+use DivisionByZeroError;
 use PHPUnit\Framework\Constraint\Exception as ConstraintException;
 use PHPUnit\Framework\Error\Warning;
 use stdClass;
@@ -1029,9 +1030,21 @@ class RealNumUnitTest extends TestCase
             });
 
             // division by 0
-            $this->assertThrows(Warning::class, function () {
-                RealNum::new(1)->div(0);
-            });
+            $exceptionClass = version_compare(phpversion(), '8.0', '>=')
+                ? DivisionByZeroError::class
+                : Warning::class;
+            try {
+                $this->assertThrows($exceptionClass, function () {
+                    RealNum::new(1)->div(0);
+                });
+            } catch (\Throwable $e) {
+                // for some reason, the DivisionByZeroError exception
+                // is still thrown in PHP 8.0 prefer-lowest tests
+                // double check it again here
+                if ($exceptionClass != get_class($e)) {
+                    throw $e;
+                }
+            }
 
             // unresolvable locale
             $this->assertThrows(InvalidLocaleException::class, function () {
