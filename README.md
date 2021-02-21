@@ -4,7 +4,7 @@
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/code-distortion/realnum?style=flat-square)
 ![Laravel](https://img.shields.io/badge/laravel-5%2C%206%20%26%207-blue?style=flat-square)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/code-distortion/realnum/run-tests?label=tests&style=flat-square)](https://github.com/code-distortion/realnum/actions)
-[![Buy us a tree](https://img.shields.io/badge/treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://offset.earth/treeware?gift-trees)
+[![Buy The World a Tree](https://img.shields.io/badge/treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://plant.treeware.earth/code-distortion/realnum)
 [![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
 ***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5, 6 & 7 but works stand-alone as well.
@@ -31,6 +31,8 @@ The ***Percent*** class is also available alongside the ***RealNum*** class to p
 
 If you would like to work with *currency* values, please consider the [code-distortion/currency](https://github.com/code-distortion/currency) package.
 
+
+
 ## Installation
 
 Install the package via composer:
@@ -38,6 +40,8 @@ Install the package via composer:
 ``` bash
 composer require code-distortion/realnum
 ```
+
+
 
 ## Usage
 
@@ -53,6 +57,8 @@ $num2 = $num1->add(4444.44); // (it's immutable so a new object is created)
 $num2->between(8000, 10000); // true
 print $num2->format();       // "9,999.99"
 ```
+
+
 
 ### Setting values
 
@@ -90,6 +96,8 @@ RealNum::new()->immutable(false);             // sets whether this object is imm
 RealNum::new()->formatSettings('!thousands'); // alters the default options used when format() is called (see the 'formatting output' section below)
 ```
 
+
+
 ### Retrieving values
 
 To retrieve the value contained in a RealNum you may read the `val` and `cast` properties. The `val` property maintains precision and in contrast, `cast` will loose some precision so use them depending on your needs:
@@ -111,6 +119,8 @@ var_dump($num->formatSettings); // ['null' => null, 'trailZeros' => null … ]
 ```
 
 ***Note:*** See the [formatting output](#formatting-output) section below for more details about how to render the value as a readable string.
+
+
 
 ### Calculations
 
@@ -151,6 +161,8 @@ $num2 = RealNum::new(2);
 $num1 = $num1->add($num2);   // pass another RealNum object
 ```
 
+
+
 ### Comparisons
 
 You can compare numbers to other values with bound checking:
@@ -178,6 +190,8 @@ You can check if a RealNum's value is between given bounds:
 RealNum::new(5)->between(2, 8);        // check if 5 is between x and y (inclusively)
 RealNum::new(5)->between(2, 8, false); // check if 5 is between x and y (NOT inclusively)
 ```
+
+
 
 ### Formatting output
 
@@ -249,6 +263,8 @@ print (string) RealNum::new(1234567.89); // "1,234,567.89"
 
 ***NOTE***: RealNum uses PHP's NumberFormatter to render the readable output, which currently has a limitation of being able to only show about 17 digits (including before the decimal place). So `format()`'s output will act a bit strangely if there are too many digits. The number stored inside will maintain it's full accuracy however. You may access the full number by reading the `val` property (see the [retrieving values](#retrieving-values) section above).
 
+
+
 ### Default format settings
 
 RealNum uses these default settings when `format()` is called: `"null=null !trailZeros decPl=null thousands !showPlus !accountingNeg locale=en !breaking"`
@@ -271,6 +287,8 @@ var_dump(RealNum::getDefaultFormatSettings()); // ['null' => null, 'trailZeros' 
 RealNum::setDefaultFormatSettings('null="NULL" trailZeros');
 var_dump(RealNum::getDefaultFormatSettings()); // ['null' => 'NULL', 'trailZeros' => true … ]
 ```
+
+
 
 ### Locale
 
@@ -299,6 +317,8 @@ RealNum::setDefaultLocale('fr-FR');
 print RealNum::getDefaultLocale(); // "fr-FR"
 ```
 
+
+
 ### Precision (maximum decimal places)
 
 ***Note:*** When using Laravel you may change this in the package config file. See the [Laravel](#laravel) section below.
@@ -318,6 +338,8 @@ The default precision may be changed. All ***new*** RealNum objects will then st
 RealNum::setDefaultMaxDecPl(30);
 print RealNum::getDefaultMaxDecPl(); // 30
 ```
+
+
 
 ### Immutability
 
@@ -355,6 +377,8 @@ $num1 = RealNum::new();
 $num2 = $num1->copy(); // this will return a clone regardless of the immutability setting
 ```
 
+
+
 ### Non-breaking whitespace
 
 Some locales use spaces when rendering numbers (eg. Swedish uses spaces for the thousands separator). `format()` can return strings containing either non-breaking whitespace characters,  or regular space characters.
@@ -373,6 +397,8 @@ print htmlentities($num->format('breaking'));     // "1 234 567,89" (regular spa
 
 ***Tip:*** The non-breaking whitespace setting can be changed per-object and by default. See the [formatting output](#formatting-output) and [default format settings](#default-format-settings) sections above.
 
+
+
 ### Chaining
 
 The *setting* and *calculation* methods above may be chained together. eg.
@@ -383,6 +409,8 @@ print RealNum::new(1)
 ->add(4)->mul(3)->div(2)->sub(1)       // some "calculation" methods
 ->format(); // "12.5"
 ```
+
+
 
 ### Percentage values
 
@@ -411,9 +439,13 @@ $percent = Percent::new(0.5); // 50%
 print $num->mul($percent);    // 10
 ```
 
+
+
 ### Laravel
 
 The RealNum package is framework agnostic and works well on it's own, but it also integrates with Laravel 5, 6 & 7.
+
+
 
 #### Service-provider
 
@@ -429,6 +461,8 @@ RealNum integrates with Laravel 5.5+ automatically thanks to Laravel's package a
 
 The service-provider will register the starting locale with RealNum and Percent and update them if it changes, so you don't have to.
 
+
+
 #### Config
 
 You may specify default max-dec-pl, immutability and format-settings by publishing the **config/code-distortion.realnum.php** config file and updating it:
@@ -437,50 +471,58 @@ You may specify default max-dec-pl, immutability and format-settings by publishi
 php artisan vendor:publish --provider="CodeDistortion\RealNum\Laravel\ServiceProvider" --tag="config"
 ```
 
+
+
 ## Testing
 
 ``` bash
 composer test
 ```
 
+
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+
 
 ### SemVer
 
 This library uses [SemVer 2.0.0](https://semver.org/) versioning. This means that changes to `X` indicate a breaking change: `0.0.X`, `0.X.y`, `X.y.z`. When this library changes to version 1.0.0, 2.0.0 and so forth it doesn't indicate that it's necessarily a notable release, it simply indicates that the changes were breaking.
 
+
+
 ## Treeware
 
-You're free to use this package, but if it makes it to your production environment please plant or buy a tree for the world.
+This package is [Treeware](https://treeware.earth). If you use it in production, then we ask that you [**buy the world a tree**](https://plant.treeware.earth/code-distortion/realnum) to thank us for our work. By contributing to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
 
-It's now common knowledge that one of the best tools to tackle the climate crisis and keep our temperatures from rising above 1.5C is to <a href="https://www.bbc.co.uk/news/science-environment-48870920">plant trees</a>. If you support this package and contribute to the Treeware forest you'll be creating employment for local families and restoring wildlife habitats.
 
-You can buy trees here [offset.earth/treeware](https://offset.earth/treeware?gift-trees)
-
-Read more about Treeware at [treeware.earth](http://treeware.earth)
 
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-### Code of conduct
+
+
+### Code of Conduct
 
 Please see [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) for details.
+
+
 
 ### Security
 
 If you discover any security related issues, please email tim@code-distortion.net instead of using the issue tracker.
 
+
+
 ## Credits
 
 - [Tim Chandler](https://github.com/code-distortion)
 
+
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## PHP Package Boilerplate
-
-This package was generated using the [PHP Package Boilerplate](https://laravelpackageboilerplate.com).
