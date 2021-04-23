@@ -947,7 +947,20 @@ abstract class Base
                 $value = $value->getVal();
             }
 
-            if ((!is_null($realNum->value)) || (!is_null($value))) {
+            // at least one value must be not-null
+            $performCalculation = (!is_null($realNum->value)) || (!is_null($value));
+
+            // but for 'bcdiv', 'bcmul' and 'bcpow'…
+            if (in_array($bcFunction, ['bcdiv', 'bcmul', 'bcpow'])) {
+
+                // if either value is null, the result is null
+                if ((is_null($realNum->value)) || (is_null($value))) {
+                    $realNum->value = null;
+                    $performCalculation = false;
+                }
+            }
+
+            if ($performCalculation) {
 
                 $maxDecPl = (int) $realNum->maxDecPl;
 
