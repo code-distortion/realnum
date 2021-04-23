@@ -797,7 +797,7 @@ class RealNumUnitTest extends TestCase
      * @test
      * @return void
      */
-    public function test_realnum_calculations_deal_with_nulls(): void
+    public function test_how_realnum_calculations_deal_with_nulls(): void
     {
         $this->assertSame(null, RealNum::new(null)->round()->val);
 
@@ -834,6 +834,9 @@ class RealNumUnitTest extends TestCase
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->dec(null)->val);
         $this->assertSame('-1.00000000000000000000', RealNum::new(null)->dec(1)->val);
         $this->assertSame('0.00000000000000000000', RealNum::new(1)->dec(1)->val);
+
+        $this->assertTrue(RealNum::new(null)->isNull());
+        $this->assertFalse(RealNum::new(1)->isNull());
     }
 
     /**
@@ -880,7 +883,7 @@ class RealNumUnitTest extends TestCase
     public function test_realnum_general_rendering(): void
     {
         // this fails, PHP's NumberFormatter format()'s the number to 15 decimal places
-        // $this->assertSame('5.12345678901234567890', (string) RealNum::new('5.12345678901234567890'));
+//        $this->assertSame('5.12345678901234567890', (string) RealNum::new('5.12345678901234567890'));
 
         $this->assertSame('', (string) new RealNum());
 

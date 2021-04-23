@@ -456,6 +456,16 @@ abstract class Base
         return $this->val($value, $throwException); // chainable - immutable
     }
 
+    /**
+     * Check if the value contained is null.
+     *
+     * @return bool
+     */
+    public function isNull(): bool
+    {
+        return $this->value === null;
+    }
+
 
 
 
