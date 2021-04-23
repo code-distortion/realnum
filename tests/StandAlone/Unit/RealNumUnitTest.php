@@ -799,38 +799,38 @@ class RealNumUnitTest extends TestCase
      */
     public function test_how_realnum_calculations_deal_with_nulls(): void
     {
-        $this->assertSame(null, RealNum::new(null)->round()->val);
+        $this->assertNull(RealNum::new(null)->round()->val);
 
-        $this->assertSame(null, RealNum::new(null)->floor()->val);
+        $this->assertNull(RealNum::new(null)->floor()->val);
 
-        $this->assertSame(null, RealNum::new(null)->ceil()->val);
+        $this->assertNull(RealNum::new(null)->ceil()->val);
 
-        $this->assertSame(null, RealNum::new(null)->add(null)->val);
+        $this->assertNull(RealNum::new(null)->add(null)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->add(null)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(null)->add(1)->val);
         $this->assertSame('2.00000000000000000000', RealNum::new(1)->add(1)->val);
 
-        $this->assertSame(null, RealNum::new(null)->div(null)->val);
-        $this->assertSame(null, RealNum::new(1)->div(null)->val);
-        $this->assertSame(null, RealNum::new(null)->div(1)->val);
+        $this->assertNull(RealNum::new(null)->div(null)->val);
+        $this->assertNull(RealNum::new(1)->div(null)->val);
+        $this->assertNull(RealNum::new(null)->div(1)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->div(1)->val);
 
-        $this->assertSame(null, RealNum::new(null)->mul(null)->val);
-        $this->assertSame(null, RealNum::new(1)->mul(null)->val);
-        $this->assertSame(null, RealNum::new(null)->mul(1)->val);
+        $this->assertNull(RealNum::new(null)->mul(null)->val);
+        $this->assertNull(RealNum::new(1)->mul(null)->val);
+        $this->assertNull(RealNum::new(null)->mul(1)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->mul(1)->val);
 
-        $this->assertSame(null, RealNum::new(null)->sub(null)->val);
+        $this->assertNull(RealNum::new(null)->sub(null)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->sub(null)->val);
         $this->assertSame('-1.00000000000000000000', RealNum::new(null)->sub(1)->val);
         $this->assertSame('0.00000000000000000000', RealNum::new(1)->sub(1)->val);
 
-        $this->assertSame(null, RealNum::new(null)->inc(null)->val);
+        $this->assertNull(RealNum::new(null)->inc(null)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->inc(null)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(null)->inc(1)->val);
         $this->assertSame('2.00000000000000000000', RealNum::new(1)->inc(1)->val);
 
-        $this->assertSame(null, RealNum::new(null)->dec(null)->val);
+        $this->assertNull(RealNum::new(null)->dec(null)->val);
         $this->assertSame('1.00000000000000000000', RealNum::new(1)->dec(null)->val);
         $this->assertSame('-1.00000000000000000000', RealNum::new(null)->dec(1)->val);
         $this->assertSame('0.00000000000000000000', RealNum::new(1)->dec(1)->val);
