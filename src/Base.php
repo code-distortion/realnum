@@ -808,9 +808,9 @@ abstract class Base
      *
      * This is to make up for the fact that a bcmath bcround function doesn't exist.
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
-     * @param string|null $value    The number to round.
-     * @param integer     $decPl    The number of decimal places to round to.
-     * @param integer     $maxDecPl The bcmath decimal places to leave in the number afterwards.
+     * @param string|null  $value    The number to round.
+     * @param integer|null $decPl    The number of decimal places to round to.
+     * @param integer      $maxDecPl The bcmath decimal places to leave in the number afterwards.
      * @return string|null
      */
     protected static function roundCalculation(?string $value, ?int $decPl, int $maxDecPl): ?string
@@ -842,9 +842,9 @@ abstract class Base
      *
      * This is to make up for the fact that a bcmath bcfloor function doesn't exist.
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
-     * @param string|null $value    The number floor.
-     * @param integer     $decPl    The number of decimal places to 'floor' to.
-     * @param integer     $maxDecPl The bcmath decimal places to leave in the number afterwards.
+     * @param string|null  $value    The number floor.
+     * @param integer|null $decPl    The number of decimal places to 'floor' to.
+     * @param integer      $maxDecPl The bcmath decimal places to leave in the number afterwards.
      * @return string|null
      */
     protected static function floorCalculation(?string $value, ?int $decPl, int $maxDecPl): ?string
@@ -882,9 +882,9 @@ abstract class Base
      *
      * This is to make up for the fact that a bcmath bcceil function doesn't exist.
      * Based on https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers .
-     * @param string|null $value    The number ceil.
-     * @param integer     $decPl    The number of decimal places to 'ceil' to.
-     * @param integer     $maxDecPl The bcmath decimal places to leave in the number afterwards.
+     * @param string|null  $value    The number ceil.
+     * @param integer|null $decPl    The number of decimal places to 'ceil' to.
+     * @param integer      $maxDecPl The bcmath decimal places to leave in the number afterwards.
      * @return string|null
     */
     protected static function ceilCalculation(?string $value, ?int $decPl, int $maxDecPl): ?string
@@ -1309,8 +1309,8 @@ abstract class Base
     /**
      * Ensure that the given string number has the desired number of decimal places in it.
      *
-     * @param string  $value The number to adjust.
-     * @param integer $decPl The number of decimal places to ensure exist.
+     * @param string|null $value The number to adjust.
+     * @param integer     $decPl The number of decimal places to ensure exist.
      * @return string|null
      */
     private static function ensureDecimalPlaces(?string $value, int $decPl): ?string
@@ -1416,10 +1416,10 @@ abstract class Base
      *
      * Adjusts for percentage mode.
      *
-     * @param integer $maxDecPl The decimal places to use (otherwise the current one is used).
+     * @param integer|null $maxDecPl The decimal places to use (otherwise the current one is used).
      * @return integer
      */
-    protected function internalMaxDecPl(int $maxDecPl = null): int
+    protected function internalMaxDecPl(?int $maxDecPl = null): int
     {
         $maxDecPl = (!is_null($maxDecPl) ? $maxDecPl : $this->maxDecPl);
         return (int) $maxDecPl;
@@ -1431,7 +1431,7 @@ abstract class Base
      * @param boolean|null $immutable The $immutable to force (otherwise the current one is used).
      * @return boolean
      */
-    protected function effectiveImmutable(bool $immutable = null): bool
+    protected function effectiveImmutable(?bool $immutable = null): bool
     {
         return (!is_null($immutable) ? $immutable : (bool) $this->immutable);
     }
