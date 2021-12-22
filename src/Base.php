@@ -648,6 +648,18 @@ abstract class Base
         return $this->sub($value);
     }
 
+    /**
+     * Determine the absolute version of the value contained in this object.
+     *
+     * @return static
+     */
+    public function abs(): self
+    {
+        return $this->gt(0)
+            ? $this->immute()
+            : $this->immute()->mul(-1);
+    }
+
 
 
 

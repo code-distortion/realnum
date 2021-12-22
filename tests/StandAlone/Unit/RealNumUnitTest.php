@@ -527,6 +527,10 @@ class RealNumUnitTest extends TestCase
         $this->assertSame(4, RealNum::new(5)->dec()->cast);
         $this->assertSame(-5, RealNum::new(5)->dec(10)->cast);
 
+        $this->assertSame(0, RealNum::new(0)->abs()->cast);
+        $this->assertSame(5, RealNum::new(5)->abs()->cast);
+        $this->assertSame(5, RealNum::new(-5)->abs()->cast);
+
         // chaining
         $this->assertSame(
             19.35,
