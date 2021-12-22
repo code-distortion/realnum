@@ -83,7 +83,7 @@ $num6 = RealNum::new();        // (will default to null)
 ***TIP:*** To maintain precision when passing values, pass them as strings instead of floating-point numbers:
 
 ``` php
-RealNum::new(0.12345678901234567890);   // "0.12345678901235" (precision lost because the number passed is really a float)
+RealNum::new(0.12345678901234567890);   // "0.12345678901235" (precision lost because the number passed is a PHP float)
 RealNum::new('0.12345678901234567890'); // "0.12345678901234567890" (passed as a string)
 ```
 
@@ -149,7 +149,7 @@ RealNum::new(5)->div(4, 3, 2, 1); // 0.2083333…
 RealNum::new(5)->mul(4, 3, 2, 1); // 120
 ```
 
-*integer*, *float*, *numeric string* and *null* values, as well as other *RealNum* objects may be passed:
+*Integer*, *float*, *numeric string* and *null* values, as well as other *RealNum* objects may be passed:
 
 ``` php
 $num1 = RealNum::new(5);
@@ -157,6 +157,7 @@ $num1 = $num1->add(2);       // pass an integer
 $num1 = $num1->add(2.0);     // pass a float
 $num1 = $num1->add('2.345'); // pass a numeric string
 $num1 = $num1->add(null);    // pass null (adds nothing)
+
 $num2 = RealNum::new(2);
 $num1 = $num1->add($num2);   // pass another RealNum object
 ```
@@ -267,7 +268,7 @@ Casting a RealNum to a string is equivalent to calling `format()` with no argume
 print (string) RealNum::new(1234567.89); // "1,234,567.89"
 ```
 
-***NOTE***: RealNum uses PHP's NumberFormatter to render the readable output, which currently has a limitation of being able to only show about 17 digits (including before the decimal place). So `format()`'s output will act a bit strangely if there are too many digits. The number stored inside will maintain it's full accuracy however. You may access the full number by reading the `val` property (see the [retrieving values](#retrieving-values) section above).
+***NOTE***: RealNum uses PHP's NumberFormatter to render the readable output, which currently has a limitation of being able to only show about 17 digits (including before the decimal place). So `format()`'s output will act a bit strangely if there are too many digits. The number stored inside will maintain its full accuracy, however. You may access the full number by reading the `val` property (see the [retrieving values](#retrieving-values) section above).
 
 
 
@@ -449,13 +450,19 @@ print $num->mul($percent);    // 10
 
 ### Laravel
 
-The RealNum package is framework agnostic and works well on it's own, but it also integrates with Laravel 5, 6 & 7.
+The RealNum package is framework agnostic and works well on its own, but it also integrates with Laravel 5, 6, 7 & 8.
 
 
 
 #### Service-provider
 
-RealNum integrates with Laravel 5.5+ automatically thanks to Laravel's package auto-detection. For Laravel 5.0 - 5.4, add the following line to **config/app.php**:
+RealNum integrates with Laravel 5.5+ automatically thanks to Laravel's package auto-detection.
+
+Laravel's locale is registered with RealNum and Percent, and updated later if it changes.
+
+<details><summary>(Click here for Laravel <= 5.4)</summary>
+<p>
+For Laravel 5.0 - 5.4, add the following line to <b>config/app.php</b>:
 
 ``` php
 'providers' => [
@@ -464,8 +471,8 @@ RealNum integrates with Laravel 5.5+ automatically thanks to Laravel's package a
     …
 ],
 ```
-
-The service-provider will register the starting locale with RealNum and Percent and update them if it changes, so you don't have to.
+</p>
+</details>
 
 
 
