@@ -974,11 +974,14 @@ abstract class Base
 
                 $maxDecPl = (int) $realNum->maxDecPl;
 
+                $origValue = $realNum->value ?? 0;
+
                 // don't adjust the given operand, leave as is
-                $value = $realNum->extractBasicValue($value, $maxDecPl);
+                $value = $realNum->extractBasicValue($value, $maxDecPl) ?? 0;
+
                 // perform the calculation
                 $newValue = (is_callable($bcFunction) // to please phpstan
-                    ? call_user_func_array($bcFunction, [$realNum->value, $value, $maxDecPl])
+                    ? call_user_func_array($bcFunction, [$origValue, $value, $maxDecPl])
                     : null
                 );
                 // round the result
