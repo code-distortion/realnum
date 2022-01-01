@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
+## [0.7.3] - 2022-01-01
+
+### Fixed
+- Bumped dependency version for code-distortion/options
+
+
+
 ## [0.7.2] - 2022-01-01
 
 ### Fixed
