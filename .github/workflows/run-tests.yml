@@ -51,17 +51,17 @@ jobs:
           extensions: bcmath, intl, mbstring
           coverage: none
 
-      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
-      - name: Determine composer's cache directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies (composer)
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-${{ matrix.php }}-testbench-${{ matrix.testbench }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
+#      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
+#      - name: Determine composer's cache directory
+#        id: composer-cache
+#        run: |
+#          echo "::set-output name=dir::$(composer config cache-files-dir)"
+#
+#      - name: Cache dependencies (composer)
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: php-${{ matrix.php }}-testbench-${{ matrix.testbench }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
 
       - name: Install dependencies (composer)
         run: |
@@ -95,17 +95,17 @@ jobs:
           extensions: bcmath, fileinfo, intl, mbstring
           coverage: none
 
-      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
-      - name: Determine composer's cache directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies (composer)
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-${{ matrix.php }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
+#      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
+#      - name: Determine composer's cache directory
+#        id: composer-cache
+#        run: |
+#          echo "::set-output name=dir::$(composer config cache-files-dir)"
+#
+#      - name: Cache dependencies (composer)
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: php-${{ matrix.php }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
 
       - name: Install dependencies (composer)
         run: |
@@ -141,17 +141,17 @@ jobs:
           extensions: bcmath, intl, mbstring
           coverage: none
 
-      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
-      - name: Determine composer's cache directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies (composer)
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-${{ matrix.php }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
+#      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
+#      - name: Determine composer's cache directory
+#        id: composer-cache
+#        run: |
+#          echo "::set-output name=dir::$(composer config cache-files-dir)"
+#
+#      - name: Cache dependencies (composer)
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: php-${{ matrix.php }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
 
       - name: Install dependencies (composer)
         run: |
