@@ -1,11 +1,11 @@
 # RealNum
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/code-distortion/realnum.svg?style=flat-square)](https://packagist.org/packages/code-distortion/realnum)
-![PHP Version](https://img.shields.io/badge/PHP-7.1%20to%208.2-blue?style=flat-square)
-![Laravel](https://img.shields.io/badge/laravel-5%2C%206%2C%207%2C%208%20%26%209-blue?style=flat-square)
+![PHP Version](https://img.shields.io/badge/PHP-7.1%20to%208.3-blue?style=flat-square)
+![Laravel](https://img.shields.io/badge/laravel-5%20to%2011-blue?style=flat-square)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/code-distortion/realnum/run-tests.yml?branch=master&style=flat-square)](https://github.com/code-distortion/realnum/actions)
 [![Buy The World a Tree](https://img.shields.io/badge/treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://plant.treeware.earth/code-distortion/realnum)
-[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](.github/CODE_OF_CONDUCT.md)
 
 ***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5 - 9 but works stand-alone as well.
 
@@ -502,7 +502,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ### SemVer
 
-This library uses [SemVer 2.0.0](https://semver.org/) versioning. This means that changes to `X` indicate a breaking change: `0.0.X`, `0.X.y`, `X.y.z`. When this library changes to version 1.0.0, 2.0.0 and so forth it doesn't indicate that it's necessarily a notable release, it simply indicates that the changes were breaking.
+This library uses [SemVer 2.0.0](https://semver.org/) versioning. This means that changes to `X` indicate a breaking change: `0.0.X`, `0.X.y`, `X.y.z`. When this library changes to version 1.0.0, 2.0.0 and so forth, it doesn't indicate that it's necessarily a notable release, it simply indicates that the changes were breaking.
 
 
 
@@ -514,13 +514,13 @@ This package is [Treeware](https://treeware.earth). If you use it in production,
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 
 
 ### Code of Conduct
 
-Please see [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) for details.
+Please see [CODE_OF_CONDUCT](.github/CODE_OF_CONDUCT.md) for details.
 
 
 
