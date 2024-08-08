@@ -23,10 +23,10 @@ class LaravelIntegrationTest extends TestCase
      */
     public function test_service_provider(): void
     {
-        $this->assertSame('en', RealNum::getDefaultLocale()); // default locale
-        $this->assertSame('en', Percent::getDefaultLocale()); // default locale
+        self::assertSame('en', RealNum::getDefaultLocale()); // default locale
+        self::assertSame('en', Percent::getDefaultLocale()); // default locale
         App::setLocale('en-AU');
-        $this->assertSame('en-AU', RealNum::getDefaultLocale());
-        $this->assertSame('en-AU', Percent::getDefaultLocale());
+        self::assertSame('en-AU', RealNum::getDefaultLocale());
+        self::assertSame('en-AU', Percent::getDefaultLocale());
     }
 }

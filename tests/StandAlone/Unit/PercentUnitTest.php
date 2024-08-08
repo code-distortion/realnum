@@ -32,7 +32,7 @@ class PercentUnitTest extends TestCase
      *
      * @return array
      */
-    public function renderingDataProvider(): array
+    public static function renderingDataProvider(): array
     {
         $output = [];
         $output['en-AU'] = [
@@ -123,27 +123,27 @@ class PercentUnitTest extends TestCase
         // make sure the Percent and RealNum settings are distinct
         Percent::resetDefaults();
         RealNum::resetDefaults();
-        $this->assertSame('en', Percent::getDefaultLocale());
-        $this->assertSame('en', RealNum::getDefaultLocale());
-        $this->assertSame(20, Percent::getDefaultMaxDecPl());
-        $this->assertSame(20, RealNum::getDefaultMaxDecPl());
-        $this->assertTrue(Percent::getDefaultImmutability());
-        $this->assertTrue(RealNum::getDefaultImmutability());
+        self::assertSame('en', Percent::getDefaultLocale());
+        self::assertSame('en', RealNum::getDefaultLocale());
+        self::assertSame(20, Percent::getDefaultMaxDecPl());
+        self::assertSame(20, RealNum::getDefaultMaxDecPl());
+        self::assertTrue(Percent::getDefaultImmutability());
+        self::assertTrue(RealNum::getDefaultImmutability());
 
         Percent::setDefaultLocale('en-AU');
         RealNum::setDefaultLocale('en-UK');
-        $this->assertSame('en-AU', Percent::getDefaultLocale());
-        $this->assertSame('en-UK', RealNum::getDefaultLocale());
+        self::assertSame('en-AU', Percent::getDefaultLocale());
+        self::assertSame('en-UK', RealNum::getDefaultLocale());
 
         Percent::setDefaultMaxDecPl(5);
         RealNum::setDefaultMaxDecPl(10);
-        $this->assertSame(5, Percent::getDefaultMaxDecPl());
-        $this->assertSame(10, RealNum::getDefaultMaxDecPl());
+        self::assertSame(5, Percent::getDefaultMaxDecPl());
+        self::assertSame(10, RealNum::getDefaultMaxDecPl());
 
         Percent::setDefaultImmutability(false);
         RealNum::setDefaultImmutability(true);
-        $this->assertFalse(Percent::getDefaultImmutability());
-        $this->assertTrue(RealNum::getDefaultImmutability());
+        self::assertFalse(Percent::getDefaultImmutability());
+        self::assertTrue(RealNum::getDefaultImmutability());
     }
 
     /**
@@ -155,23 +155,23 @@ class PercentUnitTest extends TestCase
     public function test_arithmetic_and_rounding(): void
     {
         // arithmetic
-        $this->assertSame('223.4567%', Percent::new(1.234567)->add(1)->format());
-        $this->assertSame('23.4567%', Percent::new(1.234567)->sub(1)->format());
-        $this->assertSame('246.9134%', Percent::new(1.234567)->mul(2)->format());
-        $this->assertSame('61.72835%', Percent::new(1.234567)->div(2)->format());
+        self::assertSame('223.4567%', Percent::new(1.234567)->add(1)->format());
+        self::assertSame('23.4567%', Percent::new(1.234567)->sub(1)->format());
+        self::assertSame('246.9134%', Percent::new(1.234567)->mul(2)->format());
+        self::assertSame('61.72835%', Percent::new(1.234567)->div(2)->format());
         $num1 = Percent::new(1.234567);
-        $this->assertSame('246.9134%', Percent::new(1.234567)->add($num1)->format());
+        self::assertSame('246.9134%', Percent::new(1.234567)->add($num1)->format());
 
         // make sure the Percent and RealNum settings are distinct
-        $this->assertSame('123%', Percent::new(1.234567)->round(0)->format());
-        $this->assertSame('123.5%', Percent::new(1.234567)->round(1)->format());
-        $this->assertSame('123.46%', Percent::new(1.234567)->round(2)->format());
+        self::assertSame('123%', Percent::new(1.234567)->round(0)->format());
+        self::assertSame('123.5%', Percent::new(1.234567)->round(1)->format());
+        self::assertSame('123.46%', Percent::new(1.234567)->round(2)->format());
 
         // floor and ceil to 1 percent
-        $this->assertSame('123%', Percent::new(1.234567)->floor()->format());
-        $this->assertSame('124%', Percent::new(1.234567)->ceil()->format());
+        self::assertSame('123%', Percent::new(1.234567)->floor()->format());
+        self::assertSame('124%', Percent::new(1.234567)->ceil()->format());
 
-        $this->assertTrue(Percent::new(1.234567)->between(1, 2));
+        self::assertTrue(Percent::new(1.234567)->between(1, 2));
     }
 
     /**
@@ -194,7 +194,7 @@ class PercentUnitTest extends TestCase
         ?string $expectedValue
     ): void {
 
-        $this->assertSame(
+        self::assertSame(
             $expectedValue,
             Percent::new($initialValue)->locale($locale)->maxDecPl($maxDecPl)->format($renderOptions)
         );
