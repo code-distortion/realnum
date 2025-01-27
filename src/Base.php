@@ -255,8 +255,8 @@ abstract class Base
      */
     public static function setDefaultFormatSettings($formatSettings = null): void
     {
-        static::$defaultFormatSettings = Options::defaults(static::$defaultFormatSettings)
-            ->resolve($formatSettings)
+        static::$defaultFormatSettings = Options::new($formatSettings)
+            ->defaults(static::$defaultFormatSettings)
             ->all();
     }
 
@@ -426,7 +426,7 @@ abstract class Base
     public function formatSettings($formatSettings): self
     {
         $realNum = $this->immute();
-        $realNum->formatSettings = Options::defaults(static::$defaultFormatSettings)->resolve($formatSettings)->all();
+        $realNum->formatSettings = Options::new($formatSettings)->defaults(static::$defaultFormatSettings)->all();
         return $realNum; // chainable - immutable
     }
 

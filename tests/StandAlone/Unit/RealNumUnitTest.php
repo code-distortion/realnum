@@ -6,8 +6,10 @@ use CodeDistortion\RealNum\Exceptions\InvalidValueException;
 use CodeDistortion\RealNum\Exceptions\InvalidLocaleException;
 use CodeDistortion\RealNum\Exceptions\UndefinedPropertyException;
 use CodeDistortion\RealNum\RealNum;
-use CodeDistortion\RealNum\Tests\StandAlone\TestCase;
+use CodeDistortion\RealNum\Tests\PHPUnitTestCase;
 use DivisionByZeroError;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Constraint\Exception as ConstraintException;
 use PHPUnit\Framework\Error\Warning;
 use stdClass;
@@ -16,10 +18,9 @@ use Throwable;
 /**
  * Test the RealNum library class.
  *
- * @group standalone
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
-class RealNumUnitTest extends TestCase
+class RealNumUnitTest extends PHPUnitTestCase
 {
     /**
      * Some alternate format settings used below for testing.
@@ -27,14 +28,14 @@ class RealNumUnitTest extends TestCase
      * @var array
      */
     protected static $altFormatSettings = [
-        'null' => 'null',
-        'trailZeros' => true,
-        'decPl' => 5,
-        'thousands' => false,
-        'showPlus' => true,
         'accountingNeg' => true,
-        'locale' => 'en-US',
         'breaking' => true,
+        'decPl' => 5,
+        'locale' => 'en-US',
+        'null' => 'null',
+        'showPlus' => true,
+        'thousands' => false,
+        'trailZeros' => true,
     ];
 
 
@@ -71,7 +72,7 @@ class RealNumUnitTest extends TestCase
         $return = [];
         foreach ([true, false] as $immutable) {
 
-            foreach ($properties as $valueName => $values) {
+            foreach ($properties as $values) {
 
                 $setMethod = $values[0];
                 $getField = $values[1];
@@ -292,8 +293,10 @@ class RealNumUnitTest extends TestCase
      * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_default_settings(): void
     {
 
@@ -340,8 +343,10 @@ class RealNumUnitTest extends TestCase
      * Test the ways the RealNum class can be instantiated.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_instantiation(): void
     {
         self::assertNull((new RealNum())->cast);
@@ -387,6 +392,7 @@ class RealNumUnitTest extends TestCase
      *
      * @test
      * @dataProvider immutableDataProviderSetters
+     *
      * @param boolean $immutable  Run the tests in immutable mode?.
      * @param string  $setMethod  The name of the method to call to set the value.
      * @param string  $getField   The name of the value to get to check the value afterwards.
@@ -394,6 +400,8 @@ class RealNumUnitTest extends TestCase
      * @param mixed   $endValue   The value to end up with.
      * @return void
      */
+    #[Test]
+    #[DataProvider('immutableDataProviderSetters')]
     public function test_realnum_immutability_setters(
         bool $immutable,
         string $setMethod,
@@ -420,6 +428,7 @@ class RealNumUnitTest extends TestCase
      *
      * @test
      * @dataProvider immutableDataProviderAlterationMethods
+     *
      * @param boolean $immutable  Run the tests in immutable mode?.
      * @param string  $method     The RealNum method to call.
      * @param mixed   $params     The params to pass to the method.
@@ -427,6 +436,8 @@ class RealNumUnitTest extends TestCase
      * @param mixed   $endValue   The value to end up with.
      * @return void
      */
+    #[Test]
+    #[DataProvider('immutableDataProviderAlterationMethods')]
     public function test_realnum_immutability_alter_methods(
         bool $immutable,
         string $method,
@@ -449,8 +460,10 @@ class RealNumUnitTest extends TestCase
      * Test setting various RealNum values.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_settings(): void
     {
         // callback
@@ -486,8 +499,10 @@ class RealNumUnitTest extends TestCase
      * Test the various methods that perform a RealNum calculation.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_alterations(): void
     {
         self::assertSame(5, RealNum::new()->val(5)->cast);
@@ -556,8 +571,10 @@ class RealNumUnitTest extends TestCase
      * Test the various methods that perform a calculation and generate a result.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_comparisons(): void
     {
         // less-than
@@ -769,8 +786,10 @@ class RealNumUnitTest extends TestCase
      * Test the different ways to get the value from RealNum.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_value_types_and_retrieval(): void
     {
         self::assertSame(5, RealNum::new(5)->cast); // int
@@ -799,8 +818,10 @@ class RealNumUnitTest extends TestCase
      * Test RealNum calculations with null values.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_how_realnum_calculations_deal_with_nulls(): void
     {
         self::assertNull(RealNum::new(null)->round()->val);
@@ -847,8 +868,10 @@ class RealNumUnitTest extends TestCase
      * Test RealNum calculations with many decimal places.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_calculations_with_many_decimal_places(): void
     {
         self::assertSame(
@@ -882,8 +905,10 @@ class RealNumUnitTest extends TestCase
      * Test the different ways to render the RealNum value.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_general_rendering(): void
     {
         // this fails, PHP's NumberFormatter format()'s the number to 15 decimal places
@@ -904,6 +929,7 @@ class RealNumUnitTest extends TestCase
      *
      * @test
      * @dataProvider localeRenderingDataProvider
+     *
      * @param string            $locale        The locale to use.
      * @param float|null        $initialValue  The value to render.
      * @param integer           $maxDecPl      The maximum decimal places to use.
@@ -911,6 +937,8 @@ class RealNumUnitTest extends TestCase
      * @param string|null       $expectedValue The expected render output.
      * @return void
      */
+    #[Test]
+    #[DataProvider('localeRenderingDataProvider')]
     public function test_realnum_locale_rendering(
         string $locale,
         ?float $initialValue,
@@ -929,8 +957,10 @@ class RealNumUnitTest extends TestCase
      * Test the __toString magic method.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_locale_casting_to_string(): void
     {
         $cur1 = RealNum::new(1.234567890)->locale('en-AU');
@@ -941,8 +971,10 @@ class RealNumUnitTest extends TestCase
      * Test how the RealNum class handles different decimal places, and rounding.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_decimal_places(): void
     {
         self::assertSame('1.2346', RealNum::new()->maxDecPl(4)->val('1.234567890')->val);
@@ -985,8 +1017,10 @@ class RealNumUnitTest extends TestCase
      * Test how the RealNum class' default locale is set and used.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_changing_of_realnum_locales(): void
     {
         self::assertSame('en', RealNum::new()->locale); // uses the default
@@ -1005,8 +1039,10 @@ class RealNumUnitTest extends TestCase
      * Test the locale resolver.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_class_locale_resolver(): void
     {
         $closureWasRun = false;
@@ -1024,8 +1060,10 @@ class RealNumUnitTest extends TestCase
      * Test the different values that RealNum can use.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_accepted_value_types(): void
     {
         self::assertSame(5, RealNum::new(5)->cast);
@@ -1039,19 +1077,31 @@ class RealNumUnitTest extends TestCase
         if (class_exists(ConstraintException::class)) {
 
             // initial value is invalid - boolean
-            self::assertThrows(InvalidValueException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new(true); // phpstan false positive
-            });
+            } catch (InvalidValueException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
 
             // initial value is invalid - non-numeric string
-            self::assertThrows(InvalidValueException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new('abc');
-            });
+            } catch (InvalidValueException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
 
             // initial value is invalid - object
-            self::assertThrows(InvalidValueException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new(new stdClass()); // phpstan false positive
-            });
+            } catch (InvalidValueException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
         }
     }
 
@@ -1059,39 +1109,61 @@ class RealNumUnitTest extends TestCase
      * Test the ways RealNum generates exceptions.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_realnum_exceptions(): void
     {
         // PHPUnit\Framework\Constraint\Exception is required by jchook/phpunit-assert-throws
         if (class_exists(ConstraintException::class)) {
 
             // (pseudo-)property abc doesn't exist to GET
-            self::assertThrows(UndefinedPropertyException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new()->abc; // phpstan false positive
-            });
+            } catch (UndefinedPropertyException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
 
             // (pseudo-)property abc doesn't exist to SET
-            self::assertThrows(UndefinedPropertyException::class, function () {
+            $caughtException = false;
+            try {
                 $realNum = RealNum::new();
                 $realNum->abc = true; // phpstan false positive
-            });
+            } catch (UndefinedPropertyException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
 
             // invalid value to add
-            self::assertThrows(InvalidValueException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new(1)->add(true); // phpstan false positive
-            });
+            } catch (InvalidValueException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
 
             // division by 0
             $exceptionClass = version_compare(phpversion(), '8.0', '>=')
                 ? DivisionByZeroError::class
                 : Warning::class;
             try {
-                self::assertThrows($exceptionClass, function () {
+
+                $caughtException = false;
+                try {
                     RealNum::new(1)->div(0);
-                });
+                } catch (DivisionByZeroError $e) {
+                    $caughtException = (get_class($e) == $exceptionClass);
+                } catch (Warning $e) {
+                    $caughtException = (get_class($e) == $exceptionClass);
+                }
+                self::assertTrue($caughtException);
+
             } catch (Throwable $e) {
-                // for some reason, the DivisionByZeroError exception
+                // todo: for some reason, the DivisionByZeroError exception
                 // is still thrown in PHP 8.0 prefer-lowest tests
                 // double check it again here
                 if ($exceptionClass != get_class($e)) {
@@ -1100,14 +1172,22 @@ class RealNumUnitTest extends TestCase
             }
 
             // unresolvable locale
-            self::assertThrows(InvalidLocaleException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new()->locale(1);
-            });
+            } catch (InvalidLocaleException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
 
             // invalid value to compare
-            self::assertThrows(InvalidValueException::class, function () {
+            $caughtException = false;
+            try {
                 RealNum::new(1)->lt(); // no comparison value passed
-            });
+            } catch (InvalidValueException $e) {
+                $caughtException = true;
+            }
+            self::assertTrue($caughtException);
         }
     }
 }

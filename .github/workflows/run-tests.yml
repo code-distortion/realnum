@@ -2,6 +2,9 @@ name: "run-tests"
 
 on:
   push:
+#    branches: [ "main" ]
+  pull_request:
+#    branches: [ "main" ]
   schedule:
     - cron: "0 0 * * 0"
 
@@ -11,19 +14,21 @@ jobs:
 
     name: "Lara: PHP${{ matrix.php }} TB${{ matrix.testbench }} ${{ matrix.os-title }} ${{ matrix.dependency-prefer-title }}"
     runs-on: "${{ matrix.os }}"
+    permissions:
+      contents: "read"
     strategy:
       fail-fast: true
       matrix:
         os: [ "ubuntu-latest" ]
-        php: [ "8.3", "8.2", "8.1" ]
+        php: [ "8.4", "8.3", "8.2", "8.1" ]
         testbench: [ "^9.0", "^8.0", "^7.0" ]
         dependency-prefer: [ "prefer-stable", "prefer-lowest" ]
         include:
           - testbench: "^9.0"
-            phpunit: "^10.1.0"
+            phpunit: "^11.0"
             phpunit-config-file: "phpunit.github-actions.xml.dist"
           - testbench: "^8.0"
-            phpunit: "^10.1.0"
+            phpunit: "^10.1"
             phpunit-config-file: "phpunit.github-actions.xml.dist"
           - testbench: "^7.0"
             phpunit: "^9.3"
@@ -39,6 +44,10 @@ jobs:
         exclude:
           - testbench: "^9.0"
             php: "8.1"
+          - php: "8.4"
+            testbench: "^7.0"
+          - php: "8.4"
+            testbench: "^8.0"
 
     steps:
       - name: "Checkout code"
@@ -78,6 +87,7 @@ jobs:
           shell: "bash" # make sure "^" characters are interpreted properly on Windows (e.g. in "^5.0")
           command: |
             composer remove "phpstan/phpstan" --dev --no-interaction --no-update
+            composer remove "phpstan/phpstan-strict-rules" --dev --no-interaction --no-update
             composer remove "squizlabs/php_codesniffer" --dev --no-interaction --no-update
             composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
             composer require "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
@@ -175,6 +185,7 @@ jobs:
           shell: "bash" # make sure "^" characters are interpreted properly on Windows (e.g. in "^5.0")
           command: |
             composer remove "phpstan/phpstan" --dev --no-interaction --no-update
+            composer remove "phpstan/phpstan-strict-rules" --dev --no-interaction --no-update
             composer remove "squizlabs/php_codesniffer" --dev --no-interaction --no-update
             composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
             composer require "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
@@ -191,17 +202,20 @@ jobs:
       fail-fast: true
       matrix:
         os: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
-        php: [ "8.3", "8.2", "8.1", "8.0" ]
+        php: [ "8.4", "8.3", "8.2", "8.1", "8.0" ]
         dependency-prefer: [ "prefer-stable", "prefer-lowest" ]
         include:
+          - php: "8.4"
+            phpunit: "^11.0"
+            phpunit-config-file: "phpunit.github-actions.xml.dist"
           - php: "8.3"
-            phpunit: "^10.1.0"
+            phpunit: "^10.1"
             phpunit-config-file: "phpunit.github-actions.xml.dist"
           - php: "8.2"
-            phpunit: "^10.1.0"
+            phpunit: "^10.1"
             phpunit-config-file: "phpunit.github-actions.xml.dist"
           - php: "8.1"
-            phpunit: "^10.1.0"
+            phpunit: "^10.1"
             phpunit-config-file: "phpunit.github-actions.xml.dist"
           - php: "8.0"
             phpunit: "^9.3"
@@ -258,6 +272,7 @@ jobs:
           command: |
             composer remove "orchestra/testbench" --dev --no-interaction --no-update
             composer remove "phpstan/phpstan" --dev --no-interaction --no-update
+            composer remove "phpstan/phpstan-strict-rules" --dev --no-interaction --no-update
             composer remove "squizlabs/php_codesniffer" --dev --no-interaction --no-update
             composer require "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
             composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction --optimize-autoloader --no-progress
@@ -344,6 +359,7 @@ jobs:
           command: |
             composer remove "orchestra/testbench" --dev --no-interaction --no-update
             composer remove "phpstan/phpstan" --dev --no-interaction --no-update
+            composer remove "phpstan/phpstan-strict-rules" --dev --no-interaction --no-update
             composer remove "squizlabs/php_codesniffer" --dev --no-interaction --no-update
             composer require "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
             composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction --optimize-autoloader --no-progress

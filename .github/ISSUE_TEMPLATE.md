@@ -6,7 +6,7 @@
 
 #### Versions:
 
-- realnum version:
+- RealNum version:
 - Laravel version:
 - PHP version:
 - OS + version:

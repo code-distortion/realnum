@@ -20,14 +20,14 @@ class RealNum extends Base
 {
     /** @var array The original default format-settings - used when resetting the class-level defaults. */
     public const ORIG_FORMAT_SETTINGS = [
-        'null' => null,
-        'trailZeros' => false,
-        'decPl' => null,
-        'thousands' => true,
-        'showPlus' => false,
         'accountingNeg' => false,
-        'locale' => 'en',
         'breaking' => false,
+        'decPl' => null,
+        'locale' => 'en',
+        'null' => null,
+        'showPlus' => false,
+        'thousands' => true,
+        'trailZeros' => false,
     ];
 
 
@@ -183,8 +183,8 @@ class RealNum extends Base
     public function format($options = null): ?string
     {
         $value = $this->getVal();
-        $parsedOptions = Options::parse($options);
-        $resolvedOptions = Options::defaults($this->formatSettings)->resolve($parsedOptions)->all();
+        $parsedOptions = Options::new($options)->all();
+        $resolvedOptions = Options::new($parsedOptions)->defaults($this->formatSettings)->all();
 
         // customise what happens when the value is null
         if ((!is_string($value)) || (!mb_strlen($value))) {
@@ -272,10 +272,10 @@ class RealNum extends Base
      *
      * Adjusts itself for percentage mode.
      *
-     * @param integer $maxDecPl The decimal places to use (otherwise the current one is used).
+     * @param integer|null $maxDecPl The decimal places to use (otherwise the current one is used).
      * @return integer
      */
-    protected function internalMaxDecPl(int $maxDecPl = null): int
+    protected function internalMaxDecPl(?int $maxDecPl = null): int
     {
         $maxDecPl = parent::internalMaxDecPl($maxDecPl);
         $maxDecPl = (static::$percentageMode ? $maxDecPl + 2 : $maxDecPl); // adjust for percent mode

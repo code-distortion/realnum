@@ -53,7 +53,7 @@ Before submitting a pull request:
 
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
-- **Document any change in behaviour** - Clearly note any changes, so [realnum's documentation](https://github.com/code-distortion/realnum) can be updated.
+- **Document any change in behaviour** - Clearly note any changes, so [RealNum's documentation](https://github.com/code-distortion/realnum) can be updated.
 
 - **Consider our release cycle** - We try to follow [SemVer v2.0.0](https://semver.org/). Randomly breaking public APIs is to be avoided.
 

@@ -2,17 +2,18 @@
 
 namespace CodeDistortion\RealNum\Tests\StandAlone\Unit;
 
-use CodeDistortion\RealNum\Tests\StandAlone\TestCase;
+use CodeDistortion\RealNum\Tests\PHPUnitTestCase;
 use CodeDistortion\RealNum\Percent;
 use CodeDistortion\RealNum\RealNum;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test the Percent library class.
  *
- * @group standalone
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
-class PercentUnitTest extends TestCase
+class PercentUnitTest extends PHPUnitTestCase
 {
     /**
      * Some set-up, run before each test.
@@ -116,8 +117,10 @@ class PercentUnitTest extends TestCase
      * Test the ways the default locale, maxDecPl, immutability and default-format settings are altered.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_percentage_default_settings(): void
     {
         // make sure the Percent and RealNum settings are distinct
@@ -150,8 +153,10 @@ class PercentUnitTest extends TestCase
      * Test arithmetic and rounding operations.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_arithmetic_and_rounding(): void
     {
         // arithmetic
@@ -179,6 +184,7 @@ class PercentUnitTest extends TestCase
      *
      * @test
      * @dataProvider renderingDataProvider
+     *
      * @param string            $locale        The locale to use.
      * @param float|null        $initialValue  The value to render.
      * @param integer           $maxDecPl      The options to use while rendering.
@@ -186,6 +192,8 @@ class PercentUnitTest extends TestCase
      * @param string|null       $expectedValue The expected render output.
      * @return void
      */
+    #[Test]
+    #[DataProvider('renderingDataProvider')]
     public function test_percentage_rendering(
         string $locale,
         ?float $initialValue,

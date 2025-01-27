@@ -1,13 +1,13 @@
 # RealNum
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/code-distortion/realnum.svg?style=flat-square)](https://packagist.org/packages/code-distortion/realnum)
-![PHP Version](https://img.shields.io/badge/PHP-7.1%20to%208.3-blue?style=flat-square)
+![PHP Version](https://img.shields.io/badge/PHP-7.1%20to%208.4-blue?style=flat-square)
 ![Laravel](https://img.shields.io/badge/laravel-5%20to%2011-blue?style=flat-square)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/code-distortion/realnum/run-tests.yml?branch=master&style=flat-square)](https://github.com/code-distortion/realnum/actions)
 [![Buy The World a Tree](https://img.shields.io/badge/treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://plant.treeware.earth/code-distortion/realnum)
-[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](.github/CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/contributor%20covenant-v2.1%20adopted-ff69b4.svg?style=flat-square)](.github/CODE_OF_CONDUCT.md)
 
-***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5 - 9 but works stand-alone as well.
+***code-distortion/realnum*** is a PHP library for arbitrary-precision floating-point maths with locale-aware formatting. It integrates with Laravel 5 - 11 but works stand-alone as well.
 
 
 | locale| RealNum | Percent |
@@ -450,7 +450,7 @@ print $num->mul($percent);    // 10
 
 ### Laravel
 
-The RealNum package is framework agnostic and works well on its own, but it also integrates with Laravel 5, 6, 7, 8 & 9.
+The RealNum package is framework agnostic and works well on its own, but it also integrates with Laravel 5 - 11.
 
 
 
@@ -486,11 +486,11 @@ php artisan vendor:publish --provider="CodeDistortion\RealNum\Laravel\ServicePro
 
 
 
-## Testing
+## Testing This Package
 
-``` bash
-composer test
-```
+- Clone this package: `git clone https://github.com/code-distortion/realnum.git .`
+- Run `composer install` to install dependencies
+- Run the tests: `composer test`
 
 
 

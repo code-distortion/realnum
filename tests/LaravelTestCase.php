@@ -1,18 +1,15 @@
 <?php
 
-namespace CodeDistortion\RealNum\Tests\Laravel;
+namespace CodeDistortion\RealNum\Tests;
 
 use CodeDistortion\RealNum\Laravel\ServiceProvider;
-//use Jchook\AssertThrows\AssertThrows;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 /**
  * The test case that unit tests extend from.
  */
-class TestCase extends BaseTestCase
+class LaravelTestCase extends BaseTestCase
 {
-//    use AssertThrows;
-
     /**
      * Get package providers.
      *

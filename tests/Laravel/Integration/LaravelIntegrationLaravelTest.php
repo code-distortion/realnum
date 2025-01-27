@@ -3,24 +3,26 @@
 namespace CodeDistortion\RealNum\Tests\Laravel\Integration;
 
 use App;
-use CodeDistortion\RealNum\RealNum;
 use CodeDistortion\RealNum\Percent;
-use CodeDistortion\RealNum\Tests\Laravel\TestCase;
+use CodeDistortion\RealNum\RealNum;
+use CodeDistortion\RealNum\Tests\LaravelTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test the RealNum's integration into Laravel.
  *
- * @group laravel
  * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
  */
-class LaravelIntegrationTest extends TestCase
+class LaravelIntegrationLaravelTest extends LaravelTestCase
 {
     /**
      * Test that the service-provider is registered in Laravel and acts correctly.
      *
      * @test
+     *
      * @return void
      */
+    #[Test]
     public function test_service_provider(): void
     {
         self::assertSame('en', RealNum::getDefaultLocale()); // default locale
