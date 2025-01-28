@@ -1150,26 +1150,15 @@ class RealNumUnitTest extends PHPUnitTestCase
             $exceptionClass = version_compare(phpversion(), '8.0', '>=')
                 ? DivisionByZeroError::class
                 : Warning::class;
+            $caughtException = false;
             try {
-
-                $caughtException = false;
-                try {
-                    RealNum::new(1)->div(0);
-                } catch (DivisionByZeroError $e) {
-                    $caughtException = (get_class($e) == $exceptionClass);
-                } catch (Warning $e) {
-                    $caughtException = (get_class($e) == $exceptionClass);
-                }
-                self::assertTrue($caughtException);
-
-            } catch (Throwable $e) {
-                // todo: for some reason, the DivisionByZeroError exception
-                // is still thrown in PHP 8.0 prefer-lowest tests
-                // double check it again here
-                if ($exceptionClass != get_class($e)) {
-                    throw $e;
-                }
+                RealNum::new(1)->div(0);
+            } catch (DivisionByZeroError $e) {
+                $caughtException = (get_class($e) == $exceptionClass);
+            } catch (Warning $e) {
+                $caughtException = (get_class($e) == $exceptionClass);
             }
+            self::assertTrue($caughtException);
 
             // unresolvable locale
             $caughtException = false;
